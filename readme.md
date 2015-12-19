@@ -90,7 +90,8 @@ UIButton:
 The completion callback is defined like this:
 
 ````
-typedef void(^UIImageDiskCacheCompletion)(NSError * error, UIImage * image, NSURL * url, UIImageLoadSource loadedFromSource);
+typedef void(^UIImageDiskCacheCompletion)
+  (NSError * error, UIImage * image, NSURL * url, UIImageLoadSource loadedFromSource);
 ````
 
 You always get a reference to the image, the request url, and where the image was loaded from.
