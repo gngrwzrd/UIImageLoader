@@ -183,6 +183,22 @@ If however you have an image that is going to be used a lot, you can cache the i
 
 After an image is cached in memory it will be used instead of a new image from disk cache.
 
+You can check the load source as an indicator of when to cache it in memory:
+
+````
+- (void) viewDidLoad {
+    [myImageView setImageWithURL:myImageURL completion:^(NSError *error, UIImage *image, NSURL * url, UIImageLoadSource loadSource) {
+        if(loadSource == UIImageLoadSourceNetworkToDisk || loadSource == UIImageLoadSourceDisk) {
+            [[UIImageDiskCache defaultDiskCache] cacheImage:image forURL:url];
+        }
+        
+        if(loadSource == UIImageLoadSourceMemory) {
+            //it was in memory already.
+        }
+    }]
+}
+````
+
 You can set the max cache size in bytes with:
 
 ````
