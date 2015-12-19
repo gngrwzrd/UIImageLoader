@@ -51,7 +51,7 @@ myCache.etagOnlyCacheControl = 604800; //1 week;
 myCache.etagOnlyCacheControl = 0;      //don't cache. Always send requests even if responses are 403.
 ````
 
-## Manual Disk Cache Cleanup
+### Manual Disk Cache Cleanup
 
 If you ignore server cache control you should put some kind of cleanup to remove old files. There are a few helper methods available:
 
@@ -72,7 +72,7 @@ Put some cleanup in app delegate:
 }
 ````
 
-## UIImage & UIImageView & UIButton
+### UIImage & UIImageView & UIButton
 
 If you want to use the default cache, use one of these methods:
 
@@ -105,6 +105,20 @@ UIButton:
 - (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withURL:(NSURL *) url customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
 - (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
 ````
+
+### NSURLSession
+
+You can customize the NSURLSession that's used to download images like this:
+
+````
+myCache.session = myNSURLSession;
+````
+
+If you do change the session, you are responsible for implementing it's delegate if required. And implementing SSL trust for self signed certificates if required.
+
+### NSURLSessionDataTask
+
+Each helper method on UIImage, UIImageView, and UIButton returns an NSURLSessionDataTask. You can either use it or ignore it. It's useful if you ever needed to cancel an image request.
 
 ### Completions
 
@@ -140,7 +154,7 @@ myImageView.image = [UIImage imageNamed:@"myPlaceholder"];
 }];
 ````
 
-## Memory Cache
+### Memory Cache
 
 _UIImage iOS System Cache Overview_
 
@@ -152,7 +166,7 @@ UIImage.imageNamed: returns cached images. Images are purged only when memory co
 UIImageView.imageWithContentsOfFile: always returns a new copy of the image off disk. No memory cache.
 ````
 
-In UIImageDiskCache, all images are loaded off disk with UIImage.imageWithContentsOfFileURL:. In most cases this is preferred behavior. For most iOS apps this is probably better. As you load / unload views the images you use get deallocated immediately. If you're only displaying unique images, or even using an image only a couple times, then this is prefferred.
+In UIImageDiskCache, all images are loaded off disk with UIImage.imageWithContentsOfFileURL:. In most cases this is preferred behavior. For most iOS apps this is probably better. As you load / unload views the images you use get deallocated immediately. If you're only displaying unique images, or even using an image only a couple times, then this is preferred.
 
 If however you have an image that is going to be used a lot, you can cache the image in memory with either of these:
 
