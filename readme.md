@@ -124,7 +124,7 @@ If you do change the session, you are responsible for implementing it's delegate
 
 Each helper method on UIImage, UIImageView, and UIButton returns an NSURLSessionDataTask. You can either use it or ignore it. It's useful if you ever needed to cancel an image request.
 
-### Completions
+### UIImageDiskCacheCompletion
 
 The completion callback is defined like this:
 
@@ -135,7 +135,9 @@ typedef void(^UIImageDiskCacheCompletion)
 
 You always get a reference to the image, the request url, and where the image was loaded from.
 
-You don't have to use any of these parameters as the image is set for you already on UIButtons and UIImageViews.
+For UIImageView and UIButton, the image is already set for you, you can safely ignore the image parameter. It's provided for you in case you need to do something else with it.
+
+### UIImageLoadSource
 
 UIImageLoadSource has these options available:
 
