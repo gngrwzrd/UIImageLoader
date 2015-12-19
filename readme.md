@@ -51,6 +51,27 @@ myCache.etagOnlyCacheControl = 604800; //1 week;
 myCache.etagOnlyCacheControl = 0;      //don't cache. Always send requests even if responses are 403.
 ````
 
+## Manual Disk Cache Cleanup
+
+If you ignore server cache control you should put some kind of cleanup to remove old files. There are a few helper methods available:
+
+````
+- (void) clearCachedFilesOlderThan1Day;
+- (void) clearCachedFilesOlderThan1Week;
+- (void) clearCachedFilesOlderThan:(NSTimeInterval) timeInterval;
+````
+
+These helpers use the file modified date to figure out which files to delete. Image file modified dates are updated anytime you use the image so any images that are used frequently won't be removed.
+
+Put some cleanup in app delegate:
+
+````
+- (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    UIImageDiskCache * cache = [UIImageDiskCache defaultDiskCache];
+    [cache clearCachedFilesOlderThan1Week];
+}
+````
+
 ## UIImage & UIImageView & UIButton
 
 If you want to use the default cache, use one of these methods:
