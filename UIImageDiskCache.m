@@ -278,11 +278,13 @@ static UIImageDiskCache * _default;
 	NSURL * cachedImageURL = [self localFileURLForURL:request.URL];
 	
 	//setup blank cache object
-	UIImageCacheData * cached = [[UIImageCacheData alloc] init];
+	UIImageCacheData * cached = nil;
 	
 	//load cached info file if it exists.
 	if([[NSFileManager defaultManager] fileExistsAtPath:cacheInfoFile.path]) {
 		cached = [NSKeyedUnarchiver unarchiveObjectWithFile:cacheInfoFile.path];
+	} else {
+		cached = [[UIImageCacheData alloc] init];
 	}
 	
 	//check max age
