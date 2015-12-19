@@ -12,9 +12,9 @@
 		070149671C24ED2800B9375C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 070149661C24ED2800B9375C /* ViewController.m */; };
 		0701496C1C24ED2800B9375C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0701496B1C24ED2800B9375C /* Assets.xcassets */; };
 		0701496F1C24ED2800B9375C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0701496D1C24ED2800B9375C /* LaunchScreen.storyboard */; };
-		070149781C24ED5500B9375C /* UIImageDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 070149771C24ED5500B9375C /* UIImageDiskCache.m */; settings = {ASSET_TAGS = (); }; };
-		0701497A1C25018C00B9375C /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 070149791C25018C00B9375C /* ViewController.xib */; settings = {ASSET_TAGS = (); }; };
-		0701497C1C250C6500B9375C /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 0701497B1C250C6500B9375C /* settings.png */; settings = {ASSET_TAGS = (); }; };
+		070149781C24ED5500B9375C /* UIImageDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 070149771C24ED5500B9375C /* UIImageDiskCache.m */; };
+		0701497A1C25018C00B9375C /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 070149791C25018C00B9375C /* ViewController.xib */; };
+		0701497C1C250C6500B9375C /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 0701497B1C250C6500B9375C /* settings.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -300,6 +300,7 @@
 				070149751C24ED2800B9375C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

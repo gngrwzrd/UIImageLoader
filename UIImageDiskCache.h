@@ -4,12 +4,19 @@
 /** UIImageMemoryCache **/
 
 @interface UIImageMemoryCache : NSObject
+
+//max cache size in bytes.
 @property (nonatomic) NSUInteger maxBytes;
+
+//cache an image with URL as key.
 - (void) cacheImage:(UIImage *) image forURL:(NSURL *) url;
-- (void) cacheImage:(UIImage *) image forRequest:(NSURLRequest *) request;
+
+//remove an image with url as key.
 - (void) removeImageForURL:(NSURL *) url;
-- (void) removeImageForRequest:(NSURLRequest *) request;
+
+//delete all cache data.
 - (void) purge;
+
 @end
 
 /** UIImageDiskCache **/
@@ -72,7 +79,7 @@ extern const NSInteger UIImageDiskCacheErrorNilURL;
 - (void) clearCachedFilesOlderThan:(NSTimeInterval) timeInterval;
 
 //download and cache an image with a request.
-- (NSURLSessionDataTask *) cacheImageWithRequest:(NSMutableURLRequest *) request completion:(UIImageDiskCacheURLCompletion) completion;
+- (NSURLSessionDataTask *) cacheImageWithRequest:(NSURLRequest *) request completion:(UIImageDiskCacheURLCompletion) completion;
 
 @end
 
