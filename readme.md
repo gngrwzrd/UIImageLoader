@@ -107,6 +107,18 @@ UIImageLoadSourceDisk,          //image was cached on disk already and loaded fr
 UIImageLoadSourceMemory,        //image was in memory cache
 ````
 
+### Placeholder Images
+
+Some other frameworks have the idea of placeholder images. UIImageDiskCache doesn't have these because you can set the image yourself before loading an image with UIImageDiskCache.
+
+````
+myImageView.image = [UIImage imageNamed:@"myPlaceholder"];
+[myImageView setImageWithURL:myURL
+    completion:^(NSError *error, UIImage *image, NSURL * url, UIImageLoadSource loadSource) {
+
+}];
+````
+
 ## Memory Cache
 
 _UIImage iOS System Cache Overview_
