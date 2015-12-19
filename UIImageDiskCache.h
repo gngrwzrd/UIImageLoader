@@ -30,6 +30,7 @@ typedef void(^UIImageDiskCacheURLCompletion)(NSError * error, NSURL * diskURL, N
 extern NSString * const UIImageDiskCacheErrorDomain;
 extern const NSInteger UIImageDiskCacheErrorResponseCode;
 extern const NSInteger UIImageDiskCacheErrorContentType;
+extern const NSInteger UIImageDiskCacheErrorNilURL;
 
 //use the +defaultDiskCache or create a new one to customize properties.
 @interface UIImageDiskCache : NSObject <NSURLSessionDelegate>
