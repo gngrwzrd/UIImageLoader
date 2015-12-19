@@ -67,7 +67,7 @@ UIButton:
 - (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request completion:(UIImageDiskCacheCompletion) completion;
 ````
 
-If you use a custom cache other than the default cache, use these methods:
+If you use a custom configured cache use these methods:
 
 ````
 UIImageView:
