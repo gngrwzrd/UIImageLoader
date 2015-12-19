@@ -11,7 +11,9 @@
 	[super viewDidLoad];
 	
 	NSLog(@"cache path: %@",[UIImageDiskCache defaultDiskCache].cacheDirectory);
+	//[UIImageDiskCache defaultDiskCache].etagOnlyCacheControl = 604800;
 	[UIImageDiskCache defaultDiskCache].useServerCachePolicy = FALSE;
+	[UIImageDiskCache defaultDiskCache].logCacheMisses = FALSE;
 	
 	NSURL * image = [NSURL URLWithString:@"http://cp91279.biography.com/1000509261001/1000509261001_1822941199001_BIO-Biography-31-Innovators-Steve-Jobs-115958-SF.jpg"];
 	

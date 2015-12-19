@@ -34,6 +34,9 @@ extern const NSInteger UIImageDiskCacheErrorContentType;
 //Whether to NSLog image urls when there's a cache miss.
 @property BOOL logCacheMisses;
 
+//whether to log warnings about response headers.
+@property BOOL logResponseWarnings;
+
 //get the default configured disk cache.
 + (UIImageDiskCache *) defaultDiskCache;
 

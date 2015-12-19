@@ -50,6 +50,7 @@ static UIImageDiskCache * _default;
 	self.trustAnySSLCertificate = FALSE;
 	self.useServerCachePolicy = TRUE;
 	self.logCacheMisses = TRUE;
+	self.logResponseWarnings = TRUE;
 	
 	//setup default cache dir
 	NSURL * appSupport = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
@@ -214,7 +215,7 @@ static UIImageDiskCache * _default;
 
 - (NSURLSessionDataTask *) cacheImageWithRequestUsingCacheControl:(NSMutableURLRequest *) request completion:(UIImageDiskCacheURLCompletion) completion {
 	if(!request.URL) {
-		NSLog(@"[UIImageDiskCache] WARNING: request.URL was NULL");
+		NSLog(@"[UIImageDiskCache] ERROR: request.URL was NULL");
 		completion([NSError errorWithDomain:UIImageDiskCacheErrorDomain code:UIImageDiskCacheErrorNilURL userInfo:@{NSLocalizedDescriptionKey:@"request.URL is nil"}],nil);
 	}
 	
@@ -261,10 +262,12 @@ static UIImageDiskCache * _default;
 		[request setValue:cached.etag forHTTPHeaderField:@"If-None-Match"];
 		
 		if(cached.maxage == 0) {
-			NSLog(@"[UIImageDiskCache] WARNING: Cached Image response ETag is set but no Cache-Control is available. "
-				  @"Image requests will always be sent, the response may or may not be 304. "
-				  @"Add Cache-Control policies to the server to correctly have content expire locally. "
-				  @"URL: %@",request.URL);
+			if(self.logResponseWarnings) {
+				NSLog(@"[UIImageDiskCache] WARNING: Cached Image response ETag is set but no Cache-Control is available. "
+					  @"Image requests will always be sent, the response may or may not be 304. "
+					  @"Add Cache-Control policies to the server to correctly have content expire locally. "
+					  @"URL: %@",request.URL);
+			}
 		}
 	}
 	
@@ -309,9 +312,11 @@ static UIImageDiskCache * _default;
 			
 			//check response for etag and cache control
 			if(!headers[@"ETag"] && !headers[@"Cache-Control"]) {
-				NSLog(@"[UIImageDiskCache] WARNING: You are loading images using the server cache control but the server returned neither ETag or Cache-Control. "
-					  @"Images will continue to load every time the image is needed. "
-					  @"URL: %@",request.URL);
+				if(self.logResponseWarnings) {
+					NSLog(@"[UIImageDiskCache] WARNING: You are loading images using the server cache control but the server returned neither ETag or Cache-Control. "
+						  @"Images will continue to load every time the image is needed. "
+						  @"URL: %@",request.URL);
+				}
 			}
 			
 			if(headers[@"ETag"]) {
@@ -322,11 +327,13 @@ static UIImageDiskCache * _default;
 				}
 				
 				if(!headers[@"Cache-Control"] && self.etagOnlyCacheControl < 1) {
-					NSLog(@"[UIImageDiskCache] WARNING: Image response header ETag is set but no Cache-Control is available. "
-						  @"You can set a custom cache control for this scenario with the etagOnlyCacheControl property. "
-						  @"Image requests will always be sent, the response may or may not be 304. "
-						  @"Optionally add Cache-Control policies to the server to correctly have content expire locally. "
-						  @"URL: %@",request.URL);
+					if(self.logResponseWarnings ) {
+						NSLog(@"[UIImageDiskCache] WARNING: Image response header ETag is set but no Cache-Control is available. "
+							  @"You can set a custom cache control for this scenario with the etagOnlyCacheControl property. "
+							  @"Image requests will always be sent, the response may or may not be 304. "
+							  @"Optionally add Cache-Control policies to the server to correctly have content expire locally. "
+							  @"URL: %@",request.URL);
+					}
 				}
 			}
 			
@@ -359,7 +366,7 @@ static UIImageDiskCache * _default;
 	}
 	
 	if(!request.URL) {
-		NSLog(@"[UIImageDiskCache] WARNING: request.URL was NULL");
+		NSLog(@"[UIImageDiskCache] ERROR: request.URL was NULL");
 		completion([NSError errorWithDomain:UIImageDiskCacheErrorDomain code:UIImageDiskCacheErrorNilURL userInfo:@{NSLocalizedDescriptionKey:@"request.URL is nil"}],nil);
 	}
 	

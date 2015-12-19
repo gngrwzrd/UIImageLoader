@@ -27,10 +27,11 @@ If a response is 403 it uses the cached image available on disk.
 
 ## UIImageDiskCache Object
 
-There's a default configured cache.
+There's a default configured cache which you're free to configure how you like.
 
 ````
 UIImageDiskCache * cache = [UIImageDiskCache defaultDiskCache];
+//set cache properties here.
 ````
 
 Or you can setup your own and configure it:
