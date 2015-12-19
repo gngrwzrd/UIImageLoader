@@ -1,11 +1,30 @@
 
 #import <UIKit/UIKit.h>
 
+/** UIImageMemoryCache **/
+
+@interface UIImageMemoryCache : NSObject
+@property (nonatomic) NSUInteger maxBytes;
+- (void) cacheImage:(UIImage *) image forURL:(NSURL *) url;
+- (void) cacheImage:(UIImage *) image forRequest:(NSURLRequest *) request;
+- (void) removeImageForURL:(NSURL *) url;
+- (void) removeImageForRequest:(NSURLRequest *) request;
+- (void) purge;
+@end
+
 /** UIImageDiskCache **/
 
+//image source passed in completion callbacks.
+typedef NS_ENUM(NSInteger,UIImageLoadSource) {
+	UIImageLoadSourceNone,          //no source as there was an error
+	UIImageLoadSourceNetworkToDisk, //the image was downloaded and cached on disk
+	UIImageLoadSourceDisk,          //image was cached on disk already and loaded from disk
+	UIImageLoadSourceMemory,        //image was in memory cache
+};
+
 //completions
-typedef void(^UIImageDiskCacheCompletion)(NSError * error, UIImage * image);
-typedef void(^UIImageDiskCacheURLCompletion)(NSError * error, NSURL * diskURL);
+typedef void(^UIImageDiskCacheCompletion)(NSError * error, UIImage * image, NSURL * url, UIImageLoadSource loadedFromSource);
+typedef void(^UIImageDiskCacheURLCompletion)(NSError * error, NSURL * diskURL, NSURL * url, UIImageLoadSource loadedFromSource);
 
 //error constants
 extern NSString * const UIImageDiskCacheErrorDomain;
@@ -15,11 +34,14 @@ extern const NSInteger UIImageDiskCacheErrorContentType;
 //use the +defaultDiskCache or create a new one to customize properties.
 @interface UIImageDiskCache : NSObject <NSURLSessionDelegate>
 
+//default memory cache, 25MB max bytes.
+@property UIImageMemoryCache * memoryCache;
+
 //the session object used to download data.
 //If you change this then you are responsible for implementing delegate logic for acceptsAnySSLCertificate if needed.
 @property (nonatomic) NSURLSession * session;
 
-//default location is in home/Library/Application Support/UIImageDiskCache
+//default location is in home/Library/Caches/UIImageDiskCache
 @property (readonly) NSURL * cacheDirectory;
 
 //whether to use server cache policy. Default is TRUE
@@ -48,7 +70,7 @@ extern const NSInteger UIImageDiskCacheErrorContentType;
 - (void) clearCachedFilesOlderThan1Week;
 - (void) clearCachedFilesOlderThan:(NSTimeInterval) timeInterval;
 
-//cache an image with a request.
+//download and cache an image with a request.
 - (NSURLSessionDataTask *) cacheImageWithRequest:(NSMutableURLRequest *) request completion:(UIImageDiskCacheURLCompletion) completion;
 
 @end
@@ -56,7 +78,7 @@ extern const NSInteger UIImageDiskCacheErrorContentType;
 /*****************************/
 /**  UIImageView Additions  **/
 /*****************************/
- 
+
 @interface UIImageView (UIImageDiskCache) <NSURLSessionDelegate>
 
 - (NSURLSessionDataTask *) setImageWithURL:(NSURL *) url completion:(UIImageDiskCacheCompletion) completion;
@@ -81,5 +103,17 @@ extern const NSInteger UIImageDiskCacheErrorContentType;
 - (NSURLSessionDataTask *) setBackgroundImageForControlState:(UIControlState) controlState withURL:(NSURL *) url customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
 - (NSURLSessionDataTask *) setBackgroundImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request completion:(UIImageDiskCacheCompletion) completion;
 - (NSURLSessionDataTask *) setBackgroundImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
+
+@end
+
+/***************************/
+/**   UIImage Additions   **/
+/***************************/
+
+@interface UIImage (UIImageDiskCache)
+
+- (NSURLSessionDataTask *) downloadImageWithURL:(NSURL *) url completion:(UIImageDiskCacheCompletion) completion;
+- (NSURLSessionDataTask *) downloadImageWithRequest:(NSURLRequest *) request completion:(UIImageDiskCacheCompletion) completion;
+- (NSURLSessionDataTask *) downloadImageWithRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion)completion;
 
 @end

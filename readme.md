@@ -82,6 +82,41 @@ UIButton:
 - (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
 ````
 
+## Memory Cache
+
+_UIImage System Cache Overview_
+
+````
+UIImage.imageNamed: returns cached images. Images are purged only when memory conditions start to get volatile.
+````
+
+````
+UIImageView.imageWithContentsOfFile: always returns a new copy of the image off disk. No memory cache.
+````
+
+In UIImageDiskCache, all images are loaded off disk with UIImage.imageWithContentsOfFileURL:. In most cases this is preferred behavior. For most iOS apps this is probably better. As you load / unload views the images you use get deallocated immediately. If you're only displaying unique images, or even using an image only a couple times, then this is prefferred.
+
+If however you have an image that is going to be used a lot, you can cache the image in memory with:
+
+````
+[myCache.memoryCache cacheImage:myImage forURL:url];
+[myCache.memoryCache cacheImage:myImage forRequest:request];
+````
+
+After an image is cached in memory it will be used instead of a new image from disk cache.
+
+You can set the max cache size in bytes with:
+
+````
+myCache.memoryCache.maxBytes = 26214400; //25MB
+````
+
+You can purge all from memory with:
+
+````
+[myCache.memoryCache purge];
+````
+
 ## Other Useful Features
 
 ### SSL
