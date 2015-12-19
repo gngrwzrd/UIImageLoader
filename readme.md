@@ -18,7 +18,7 @@ Images that are cached and available on disk load into UIImageView or UIButton a
 
 It works with servers that support ETag/If-None-Match and Cache-Control headers.
 
-If the server responds with only ETag you can optionally cache the image for a default amount of time. Or don't cache it at all and send requests each time.
+If the server responds with only ETag you can optionally cache the image for a default amount of time. Or don't cache it at all and send requests each time to check for modified content.
 
 If a response is 403 it uses the cached image available on disk.
 
@@ -48,7 +48,7 @@ For responses that return an ETag header but no Cache-Control header you can set
 
 ````
 myCache.etagOnlyCacheControl = 604800; //1 week;
-myCache.etagOnlyCacheControl = 0;      //don't cache. Always send requests even if responses are 403.
+myCache.etagOnlyCacheControl = 0;      //always send request to see if there's new content.
 ````
 
 ## Manual Disk Cache Cleanup
