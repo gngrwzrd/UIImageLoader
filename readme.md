@@ -20,7 +20,7 @@ It works with servers that support ETag/If-None-Match and Cache-Control headers.
 
 If the server responds with only ETag you can optionally cache the image for a default amount of time. Or don't cache it at all and send requests each time to check for modified content.
 
-If a response is 403 it uses the cached image available on disk.
+If a response is 304 it uses the cached image available on disk.
 
 ## UIImageDiskCache Object
 
