@@ -1,100 +1,98 @@
-# UIImageView+DiskCache
+# UIImageDiskCache
 
-UIImageView+DiskCache is an alternative to a subset of functionality from SDWebImage.
+UIImageDiskCache is an alternative to a subset of caching functionality from SDWebImage.
 
-This allows you to cache images on disk and completely ignore the cache control policies from a server.
+It can use server cache control policies to re-download images when expired.
 
-Or you can choose to use cache control policies from a server to manage re-downloading the images when cache has expired.
+Or you can completely ignore the cache control policies from a server and manually clean-up images.
 
-This class is roughly 400 lines of code and in one file. Uses modern NSURLSession for downloading so everything happens
-in the background.
+It's very small at roughly 500+ lines of code and only a header/implementation file.
 
-Server cache control policy logic is implemented manually instead of a NSURLCache. There's a noticeable difference in
+Server cache control logic is implemented manually instead of a NSURLCache. There's a noticeable difference in
 performance without NSURLCache.
 
-## No Flickering
+## No Flickering or Noticeable Delayed Loads
 
-Without NSURLCache there's a noticeable performance difference. This generally means you see no flickering, and images that are cached and available on disk load into the UIImageView almost immediatly.
+Images that are cached and available on disk load into UIImageView or UIButton almost immediatly.
 
 This is most noticeable on table view cells. The slight delay that you may sometimes see before a cached image is loaded and displayed is entirely gone.
 
-## Ignoring Cache Control
+## Server Cache Policies
 
-If you know your app downloads images that will never change this is useful.
+It works with servers that support ETag and Cache-Control headers.
 
-If you're going to ignore cache control all together for images, make sure to at least put some cleanup in your app delegate:
+If the server responds with only ETag you can optionally cache the image for a default amount of time. Or don't cache it at all and send requests each time.
 
-    - (BOOL) application:(UIApplication *) application didFinishLaunchingWithOptions:(NSDictionary *) launchOptions {
-        [UIImageView clearCachedFilesOlderThan1Week];
-    }
+If a response is 403 it uses the cached image available on disk.
 
-Or use one of these cleanup methods to your needs:
+## UIImageDiskCache Object
 
-    + (void) clearCachedFilesOlderThan1Day;
-    + (void) clearCachedFilesOlderThan1Week;
-    + (void) clearCachedFilesOlderThan:(NSTimeInterval) timeInterval;
+There's a default configured cache.
 
-The easiest way to set an image ignoring server cache control is with this:
+````
+UIImageDiskCache * cache = [UIImageDiskCache defaultDiskCache];
+````
 
-    [myImageView setImageForURL:myURL withCompletion:^(NSError *error, UIImage *image) {
-	    if(error) {
-		    //do something.
-    		return;
-	    }
-    }];
+Or you can setup your own and configure it:
 
-## Using Server Cache Control Policies
+````
+UIImageDiskCache * cache = [[UIImageDiskCache alloc] init];
+//set cache properties here.
+````
 
-If you are going to use cache control policies from the server then don't do any manual cleanup of the cache.
+By default the cache will use server cache control policies. You can disable server cache control:
 
-The easiest way to set an image that uses server cache control policies is with this:
+````
+myCache.useServerCachePolicy = FALSE;
+````
 
-    [myImageView setImageForURLWithCacheControl:myURL withCompletion:^(NSError * error, UIImage * image) {
-	    if(error) {
-		    //do something.
-    		return;
-   	    }
-   	    
-	    //do nothing. image is already set on myImageView.image, it's passed to you just in case you
-    	//need to do something else with it.
-    }];
+For responses that return an ETag header but no Cache-Control header you can set a default amount of time to cache those images for:
+
+````
+myCache.etagOnlyCacheControl = 604800; //1 week;
+myCache.etagOnlyCacheControl = 0;      //don't cache. Always send requests even if responses are 403.
+````
+
+## UIImageView & UIButton
+
+If you want to use the default cache, use one of these methods:
+
+````
+UIImageView:
+- (NSURLSessionDataTask *) setImageWithURL:(NSURL *) url completion:(UIImageDiskCacheCompletion) completion;
+- (NSURLSessionDataTask *) setImageWithRequest:(NSURLRequest *) request completion:(UIImageDiskCacheCompletion) completion;
+
+UIButton:
+- (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withURL:(NSURL *) url completion:(UIImageDiskCacheCompletion) completion;
+- (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request completion:(UIImageDiskCacheCompletion) completion;
+````
+
+If you use a custom cache other than the default cache, use these methods:
+
+````
+UIImageView:
+- (NSURLSessionDataTask *) setImageWithURL:(NSURL *) url customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
+- (NSURLSessionDataTask *) setImageWithRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache - completion:(UIImageDiskCacheCompletion) completion;
+
+UIButton:
+- (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withURL:(NSURL *) url customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
+- (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
+````
 
 ## Other Useful Features
 
 ### SSL
 
-If you need to support self signed certificates you can use:
+If you need to support self signed certificates you can use (false by default):
 
 ````
-+ (void) setAcceptsAnySSLCertificate:(BOOL) acceptsAnySSLCertificate;
+myCache.trustAnySSLCertificate = TRUE;
 ````
 
 ### Auth Basic Password Protected Directories/Images
 
-You can set a global default user/pass with this:
+You can set default user/pass that gets sent in every request with:
 
 ````
-+ (void) setDefaultAuthBasicUsername:(NSString *) username password:(NSString *) password;
-````
-
-Then you set images with either of these:
-
-````
-- (void) setImageWithDefaultAuthBasicForURL:(NSURL *) url withCompletion:(UIImageViewDiskCacheCompletion) completion;
-- (void) setImageForURLWithCacheControlAndDefaultAuthBasic:(NSURL *) url withCompletion:(UIImageViewDiskCacheCompletion) completion;
-````
-
-### Custom Requests
-
-If you have other requirements for how the request is constructed you can use these:
-
-````
-- (void) setImageForRequestWithCacheControl:(NSURLRequest *) request withCompletion:(UIImageViewDiskCacheCompletion) completion;
-- (void) setImageForRequest:(NSURLRequest *) request withCompletion:(UIImageViewDiskCacheCompletion) completion;
-````
-
-*Note that if you are passing a custom request and you need http authorization, you can use this method to add it to a request:*
-
-````
-+ (void) setHTTPAuthorizationForRequest:(NSMutableURLRequest *) request;
+[myCache setAuthUsername:@"username" password:@"password"];
 ````

@@ -47,7 +47,7 @@ static UIImageDiskCache * _default;
 
 - (id) init {
 	self = [super init];
-	self.acceptsAnySSLCertificate = FALSE;
+	self.trustAnySSLCertificate = FALSE;
 	self.useServerCachePolicy = TRUE;
 	self.logCacheMisses = TRUE;
 	
@@ -104,9 +104,9 @@ static UIImageDiskCache * _default;
 
 - (void) setSession:(NSURLSession *)session {
 	self.activeSession = session;
-	if(session.delegate && self.acceptsAnySSLCertificate) {
+	if(session.delegate && self.trustAnySSLCertificate) {
 		if(![session.delegate respondsToSelector:@selector(URLSession:didReceiveChallenge:completionHandler:)]) {
-			NSLog(@"[UIImageDiskCache] WARNING: You set a custom NSURLSession and require acceptsAnySSLCertificate but your "
+			NSLog(@"[UIImageDiskCache] WARNING: You set a custom NSURLSession and require trustAnySSLCertificate but your "
 				  @"session delegate doesn't respond to URLSession:didReceiveChallenge:completionHandler:");
 		}
 	}
@@ -124,7 +124,7 @@ static UIImageDiskCache * _default;
 }
 
 - (void) URLSession:(NSURLSession *)session didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler {
-	if(self.acceptsAnySSLCertificate) {
+	if(self.trustAnySSLCertificate) {
 		completionHandler(NSURLSessionAuthChallengeUseCredential,[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
 	} else {
 		completionHandler(NSURLSessionAuthChallengePerformDefaultHandling,nil);
@@ -307,8 +307,9 @@ static UIImageDiskCache * _default;
 				return;
 			}
 			
+			//check response for etag and cache control
 			if(!headers[@"ETag"] && !headers[@"Cache-Control"]) {
-				NSLog(@"[UIImageDiskCache] WARNING: You are loading images using the Cache Control policies but the server returned neither ETag or Cache-Control. "
+				NSLog(@"[UIImageDiskCache] WARNING: You are loading images using the server cache control but the server returned neither ETag or Cache-Control. "
 					  @"Images will continue to load every time the image is needed. "
 					  @"URL: %@",request.URL);
 			}
@@ -316,10 +317,15 @@ static UIImageDiskCache * _default;
 			if(headers[@"ETag"]) {
 				cached.etag = headers[@"ETag"];
 				
-				if(!headers[@"Cache-Control"]) {
+				if(self.etagOnlyCacheControl > 0) {
+					cached.maxage = self.etagOnlyCacheControl;
+				}
+				
+				if(!headers[@"Cache-Control"] && self.etagOnlyCacheControl < 1) {
 					NSLog(@"[UIImageDiskCache] WARNING: Image response header ETag is set but no Cache-Control is available. "
+						  @"You can set a custom cache control for this scenario with the etagOnlyCacheControl property. "
 						  @"Image requests will always be sent, the response may or may not be 304. "
-						  @"Add Cache-Control policies to the server to correctly have content expire locally."
+						  @"Optionally add Cache-Control policies to the server to correctly have content expire locally. "
 						  @"URL: %@",request.URL);
 				}
 			}

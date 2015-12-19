@@ -25,8 +25,11 @@ extern const NSInteger UIImageDiskCacheErrorContentType;
 //whether to use server cache policy. Default is TRUE
 @property BOOL useServerCachePolicy;
 
+//if useServerCachePolicy=true and response has only ETag header, cache the image for this amount of time. 0 = no cache.
+@property NSTimeInterval etagOnlyCacheControl;
+
 //Whether to trust any ssl certificate. Default is FALSE
-@property BOOL acceptsAnySSLCertificate;
+@property BOOL trustAnySSLCertificate;
 
 //Whether to NSLog image urls when there's a cache miss.
 @property BOOL logCacheMisses;
