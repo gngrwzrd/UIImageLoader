@@ -691,6 +691,11 @@ static UIImageDiskCache * _default;
 	}];
 }
 
+- (NSURLSessionDataTask *) downloadImageWithURL:(NSURL *) url customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion; {
+	NSURLRequest * request = [NSURLRequest requestWithURL:url];
+	return [self downloadImageWithRequest:request customCache:customCache completion:completion];
+}
+
 - (NSURLSessionDataTask *) downloadImageWithURL:(NSURL *) url completion:(UIImageDiskCacheCompletion) completion; {
 	NSURLRequest * request = [NSURLRequest requestWithURL:url];
 	return [self downloadImageWithRequest:request customCache:[UIImageDiskCache defaultDiskCache] completion:completion];
