@@ -109,7 +109,7 @@ UIImageLoadSourceMemory,        //image was in memory cache
 
 ## Memory Cache
 
-_UIImage System Cache Overview_
+_UIImage iOS System Cache Overview_
 
 ````
 UIImage.imageNamed: returns cached images. Images are purged only when memory conditions start to get volatile.
