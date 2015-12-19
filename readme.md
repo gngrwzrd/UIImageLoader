@@ -85,6 +85,27 @@ UIButton:
 - (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
 ````
 
+### Completions
+
+The completion callback is defined like this:
+
+````
+typedef void(^UIImageDiskCacheCompletion)(NSError * error, UIImage * image, NSURL * url, UIImageLoadSource loadedFromSource);
+````
+
+You always get a reference to the image, the request url, and where the image was loaded from.
+
+You don't have to use any of these parameters as the image is set for you already on UIButtons and UIImageViews.
+
+UIImageLoadSource has these options available:
+
+````
+UIImageLoadSourceNone,          //no source as there was an error
+UIImageLoadSourceNetworkToDisk, //the image was downloaded and cached on disk
+UIImageLoadSourceDisk,          //image was cached on disk already and loaded from disk
+UIImageLoadSourceMemory,        //image was in memory cache
+````
+
 ## Memory Cache
 
 _UIImage System Cache Overview_
@@ -99,7 +120,7 @@ UIImageView.imageWithContentsOfFile: always returns a new copy of the image off 
 
 In UIImageDiskCache, all images are loaded off disk with UIImage.imageWithContentsOfFileURL:. In most cases this is preferred behavior. For most iOS apps this is probably better. As you load / unload views the images you use get deallocated immediately. If you're only displaying unique images, or even using an image only a couple times, then this is prefferred.
 
-If however you have an image that is going to be used a lot, you can cache the image in memory with:
+If however you have an image that is going to be used a lot, you can cache the image in memory with either of these:
 
 ````
 [myCache.memoryCache cacheImage:myImage forURL:url];
