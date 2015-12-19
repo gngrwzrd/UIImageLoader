@@ -11,6 +11,8 @@ It's very small at roughly 500+ lines of code and only a header/implementation f
 Server cache control logic is implemented manually instead of a NSURLCache. There's a noticeable difference in
 performance without NSURLCache.
 
+Everything is asynchronous and uses modern objective-c with libdispatch and NSURLSession.
+
 ## No Flickering or Noticeable Delayed Loads
 
 Images that are cached and available on disk load into UIImageView or UIButton almost immediatly.
