@@ -101,6 +101,7 @@ static UIImageDiskCache * _default;
 	self.useServerCachePolicy = TRUE;
 	self.logCacheMisses = TRUE;
 	self.logResponseWarnings = TRUE;
+	self.etagOnlyCacheControl = 0;
 	
 	//default memory cache
 	self.memoryCache = [[UIImageMemoryCache alloc] init];

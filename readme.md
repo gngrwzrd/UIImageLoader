@@ -48,7 +48,7 @@ For responses that return an ETag header but no Cache-Control header you can set
 
 ````
 myCache.etagOnlyCacheControl = 604800; //1 week;
-myCache.etagOnlyCacheControl = 0;      //always send request to see if there's new content.
+myCache.etagOnlyCacheControl = 0;      //(default) always send request to see if there's new content.
 ````
 
 ### Manual Disk Cache Cleanup
