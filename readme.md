@@ -143,7 +143,7 @@ UIImageLoadSource has these options available:
 
 ````
 UIImageLoadSourceNone,          //no source as there was an error
-UIImageLoadSourceNetworkToDisk, //the image was downloaded and cached on disk
+UIImageLoadSourceNetworkToDisk, //a network request was sent before returning the image from disk
 UIImageLoadSourceDisk,          //image was cached on disk already and loaded from disk
 UIImageLoadSourceMemory,        //image was in memory cache
 ````
