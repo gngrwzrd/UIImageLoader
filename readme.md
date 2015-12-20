@@ -69,7 +69,7 @@ If you ignore server cache control you should put some kind of cleanup to remove
 - (void) clearCachedFilesOlderThan:(NSTimeInterval) timeInterval;
 ````
 
-These helpers use the file modified date to figure out which files to delete. Image file modified dates are updated anytime you use the image so any images that are used frequently won't be removed.
+These methods use the file modified date to decide which to delete. Images that are used frequently will not be removed. When an image is accessed using the cache the modified date is updated.
 
 Put some cleanup in app delegate:
 
