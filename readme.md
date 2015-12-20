@@ -1,6 +1,6 @@
 # UIImageDiskCache
 
-UIImageDiskCache is a helper to cache images on disk or in memory, with additions for UIImage, UIImageView and UIButton.
+UIImageDiskCache is a helper to cache images on disk with additions for UIImage, UIImageView and UIButton.
 
 It supports server cache control policies to re-download images when expired. Server cache control logic is implemented manually instead of using an NSURLCache for performance reasons.
 
