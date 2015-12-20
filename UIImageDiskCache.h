@@ -26,11 +26,13 @@ typedef NS_ENUM(NSInteger,UIImageLoadSource) {
 	UIImageLoadSourceNone,          //no source as there was an error
 	UIImageLoadSourceNetworkToDisk, //a network request was sent before returning the image from disk
 	UIImageLoadSourceDisk,          //image was cached on disk already and loaded from disk
+	UIImageLoadSourceMemory,        //image was in memory cache
 };
 
 //completions
 typedef void(^UIImageDiskCacheCompletion)(NSError * error, UIImage * image, NSURL * url, UIImageLoadSource loadedFromSource);
 typedef void(^UIImageDiskCacheURLCompletion)(NSError * error, NSURL * diskURL, NSURL * url, UIImageLoadSource loadedFromSource);
+typedef void(^UIImageDiskCacheImageCompletion)(UIImage * image);
 
 //error constants
 extern NSString * const UIImageDiskCacheErrorDomain;
@@ -40,6 +42,9 @@ extern const NSInteger UIImageDiskCacheErrorNilURL;
 
 //use the +defaultDiskCache or create a new one to customize properties.
 @interface UIImageDiskCache : NSObject <NSURLSessionDelegate>
+
+//memory cache where images get stored if cacheImagesInMemory is on.
+@property UIImageMemoryCache * memoryCache;
 
 //the session object used to download data.
 //If you change this then you are responsible for implementing delegate logic for acceptsAnySSLCertificate if needed.
@@ -53,6 +58,9 @@ extern const NSInteger UIImageDiskCacheErrorNilURL;
 
 //if useServerCachePolicy=true and response has only ETag header, cache the image for this amount of time. 0 = no cache.
 @property NSTimeInterval etagOnlyCacheControl;
+
+//whether to cache loaded images (from disk) into memory.
+@property BOOL cacheImagesInMemory;
 
 //Whether to trust any ssl certificate. Default is FALSE
 @property BOOL trustAnySSLCertificate;
@@ -76,6 +84,9 @@ extern const NSInteger UIImageDiskCacheErrorNilURL;
 
 //download and cache an image with a request.
 - (NSURLSessionDataTask *) cacheImageWithRequest:(NSURLRequest *) request completion:(UIImageDiskCacheURLCompletion) completion;
+
+//returns an image or nil if the image is available on disk or memory cache.
+- (void) imageForURL:(NSURL *) url completion:(UIImageDiskCacheImageCompletion) completion;
 
 @end
 

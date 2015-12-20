@@ -18,7 +18,7 @@ For average apps that would like to cache images on disk and have some options t
 
 My particular use case was a better disk cache that isn't NSURLCache. It provides better options for handling how server cache control policies are used. And get rid of delays or flickering that happens because of NSURLCache being slow.
 
-## No Flickering or Noticeable Delayed Loads
+## No Flickering or Noticeable Delayed Loads For Cached Images
 
 Images that are cached and available on disk load into UIImageView or UIButton almost immediatly. This is most noticeable on table view cells.
 
