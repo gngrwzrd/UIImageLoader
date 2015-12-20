@@ -14,7 +14,7 @@ Everything is asynchronous and uses modern objective-c with libdispatch and NSUR
 
 This isn't intended to compete with other frameworks that are optimized to provide fast scrolling for thousands or tens-of-thousands of images.
 
-For average apps that would like to cache images on disk and have some options to control caching, this make a noticeable difference.
+For average apps that would like to cache images on disk and have some options to control caching, this will make a noticeable difference.
 
 My particular use case was a better disk cache that isn't NSURLCache. It provides better options for handling how server cache control policies are used. And get rid of delays or flickering that happens because of NSURLCache being slow.
 
