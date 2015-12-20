@@ -12,7 +12,9 @@ Everything is asynchronous and uses modern objective-c with libdispatch and NSUR
 
 ## Use Case
 
-This isn't intended to compete with other frameworks like SDWebImage or FastImageCache or be the fastest image cache. For average apps that would like to cache images on disk and have some options to control caching, this make a noticeable difference.
+This isn't intended to compete with other frameworks that are optimized to provide fast scrolling for thousands or tens-of-thousands of images.
+
+For average apps that would like to cache images on disk and have some options to control caching, this make a noticeable difference.
 
 My particular use case was a better disk cache that isn't NSURLCache. It provides better options for handling how server cache control policies are used. And get rid of delays or flickering that happens because of NSURLCache being slow.
 
@@ -151,7 +153,6 @@ UIImageLoadSource has these options available:
 UIImageLoadSourceNone,          //no source as there was an error
 UIImageLoadSourceNetworkToDisk, //a network request was sent before returning the image from disk
 UIImageLoadSourceDisk,          //image was cached on disk already and loaded from disk
-UIImageLoadSourceMemory,        //image was in memory cache
 ````
 
 ### Placeholder Images
