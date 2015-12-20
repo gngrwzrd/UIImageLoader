@@ -30,6 +30,10 @@ If the server responds with only ETag you can optionally cache the image for a d
 
 If a response is 304 it uses the cached image available on disk.
 
+## Installation
+
+Download, fork, clone or submodule this repo. Then add UIImageDiskCache.h/m to your Xcode project.
+
 ## UIImageDiskCache Object
 
 There's a default configured cache which you're free to configure how you like.
