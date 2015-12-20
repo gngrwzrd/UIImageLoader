@@ -1,50 +1,6 @@
 
 #import "UIImageDiskCache.h"
 
-/**********************/
-/* UIImageMemoryCache */
-/**********************/
-
-@interface UIImageMemoryCache ()
-@property NSCache * cache;
-@end
-
-@implementation UIImageMemoryCache
-
-- (id) init {
-	self = [super init];
-	self.cache = [[NSCache alloc] init];
-	self.cache.totalCostLimit = 26214400; //25MB
-	return self;
-}
-
-- (void) setMaxBytes:(NSUInteger) maxBytes {
-	self.cache.totalCostLimit = maxBytes;
-}
-
-- (NSUInteger) maxBytes {
-	return self.cache.totalCostLimit;
-}
-
-- (void) cacheImage:(UIImage *) image forURL:(NSURL *) url; {
-	NSUInteger cost = CGImageGetHeight(image.CGImage) * CGImageGetBytesPerRow(image.CGImage);
-	[self.cache setObject:image forKey:url.path cost:cost];
-}
-
-- (void) removeImageForURL:(NSURL *) url; {
-	[self.cache removeObjectForKey:url.path];
-}
-
-- (void) purge; {
-	[self.cache removeAllObjects];
-}
-
-- (void) dealloc {
-	[self purge];
-}
-
-@end
-
 /********************/
 /* UIImageCacheData */
 /********************/
@@ -97,9 +53,6 @@ static UIImageDiskCache * _default;
 	self.logCacheMisses = TRUE;
 	self.logResponseWarnings = TRUE;
 	self.etagOnlyCacheControl = 0;
-	
-	//default memory cache
-	self.memoryCache = [[UIImageMemoryCache alloc] init];
 	
 	//setup default cache dir
 	NSURL * appSupport = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
@@ -533,14 +486,6 @@ static UIImageDiskCache * _default;
 }
 
 - (NSURLSessionDataTask *) setImageWithRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion; {
-	//check memory cache
-	UIImage * image = [customCache.memoryCache.cache objectForKey:request.URL.path];
-	if(image) {
-		self.image = image;
-		completion(nil,image,request.URL,UIImageLoadSourceMemory);
-		return nil;
-	}
-	
 	return [customCache cacheImageWithRequest:request completion:^(NSError *error, NSURL *diskURL, NSURL * url, UIImageLoadSource loadSource) {
 		if(error) {
 			completion(error,nil,url,loadSource);
@@ -593,14 +538,6 @@ static UIImageDiskCache * _default;
 }
 
 - (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion; {
-	//check memory cache
-	UIImage * image = [customCache.memoryCache.cache objectForKey:request.URL.path];
-	if(image) {
-		[self setImage:image forState:controlState];
-		completion(nil,image,request.URL,UIImageLoadSourceMemory);
-		return nil;
-	}
-	
 	return [customCache cacheImageWithRequest:request completion:^(NSError *error, NSURL *diskURL, NSURL * url, UIImageLoadSource loadSource) {
 		if(error) {
 			completion(error,nil,url,loadSource);
@@ -611,14 +548,6 @@ static UIImageDiskCache * _default;
 }
 
 - (NSURLSessionDataTask *) setBackgroundImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion; {
-	//check memory cache
-	UIImage * image = [customCache.memoryCache.cache objectForKey:request.URL.path];
-	if(image) {
-		[self setBackgroundImage:image forState:controlState];
-		completion(nil,image,request.URL,UIImageLoadSourceMemory);
-		return nil;
-	}
-	
 	return [customCache cacheImageWithRequest:request completion:^(NSError *error, NSURL *diskURL, NSURL * url, UIImageLoadSource loadSource) {
 		if(error) {
 			completion(error,nil,url,loadSource);
@@ -673,13 +602,6 @@ static UIImageDiskCache * _default;
 }
 
 - (NSURLSessionDataTask *) downloadImageWithRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion)completion {
-	//check memory cache
-	UIImage * image = [customCache.memoryCache.cache objectForKey:request.URL.path];
-	if(image) {
-		completion(nil,image,request.URL,UIImageLoadSourceMemory);
-		return nil;
-	}
-	
 	return [customCache cacheImageWithRequest:request completion:^(NSError *error, NSURL *diskURL, NSURL * url, UIImageLoadSource loadSource) {
 		if(error) {
 			completion(error,nil,url,loadSource);

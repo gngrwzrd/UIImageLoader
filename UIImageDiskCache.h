@@ -26,7 +26,6 @@ typedef NS_ENUM(NSInteger,UIImageLoadSource) {
 	UIImageLoadSourceNone,          //no source as there was an error
 	UIImageLoadSourceNetworkToDisk, //a network request was sent before returning the image from disk
 	UIImageLoadSourceDisk,          //image was cached on disk already and loaded from disk
-	UIImageLoadSourceMemory,        //image was in memory cache
 };
 
 //completions
@@ -41,9 +40,6 @@ extern const NSInteger UIImageDiskCacheErrorNilURL;
 
 //use the +defaultDiskCache or create a new one to customize properties.
 @interface UIImageDiskCache : NSObject <NSURLSessionDelegate>
-
-//default memory cache, 25MB max bytes.
-@property UIImageMemoryCache * memoryCache;
 
 //the session object used to download data.
 //If you change this then you are responsible for implementing delegate logic for acceptsAnySSLCertificate if needed.

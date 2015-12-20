@@ -10,6 +10,12 @@ It's very small at roughly 700+ lines of code in a single header / implementatio
 
 Everything is asynchronous and uses modern objective-c with libdispatch and NSURLSession.
 
+## Use Case
+
+This isn't intended to compete with other frameworks like SDWebImage or FastImageCache or be the fastest image cache. For average apps that would like to cache images on disk and have some options to control caching, this make a noticeable difference.
+
+My particular use case was a better disk cache that isn't a NSURLCache, provides some control to decide how best to handle cacheing when a server may not have cache control. And get rid of delays or flickering that happens because of NSURLCache being slow.
+
 ## No Flickering or Noticeable Delayed Loads
 
 Images that are cached and available on disk load into UIImageView or UIButton almost immediatly. This is most noticeable on table view cells.
@@ -158,57 +164,6 @@ myImageView.image = [UIImage imageNamed:@"myPlaceholder"];
     completion:^(NSError *error, UIImage *image, NSURL * url, UIImageLoadSource loadSource) {
 
 }];
-````
-
-### Memory Cache
-
-_UIImage iOS System Cache Overview_
-
-````
-UIImage.imageNamed: returns cached images. Images are purged only when memory conditions start to get volatile.
-````
-
-````
-UIImageView.imageWithContentsOfFile: always returns a new copy of the image off disk. No memory cache.
-````
-
-In UIImageDiskCache, all images are loaded off disk with UIImage.imageWithContentsOfFileURL:. In most cases this is preferred behavior. For most iOS apps this is probably better. As you load / unload views the images you use get deallocated immediately. If you're only displaying unique images, or even using an image only a couple times, then this is preferred.
-
-If however you have an image that is going to be used a lot, you can cache the image in memory with either of these:
-
-````
-[myCache.memoryCache cacheImage:myImage forURL:url];
-[myCache.memoryCache cacheImage:myImage forRequest:request];
-````
-
-After an image is cached in memory it will be used instead of a new image from disk cache.
-
-You can check the load source as an indicator of when to cache it in memory:
-
-````
-- (void) viewDidLoad {
-    [myImageView setImageWithURL:myImageURL completion:^(NSError *error, UIImage *image, NSURL * url, UIImageLoadSource loadSource) {
-        if(loadSource == UIImageLoadSourceNetworkToDisk || loadSource == UIImageLoadSourceDisk) {
-            [[UIImageDiskCache defaultDiskCache] cacheImage:image forURL:url];
-        }
-        
-        if(loadSource == UIImageLoadSourceMemory) {
-            //it was in memory already.
-        }
-    }]
-}
-````
-
-You can set the max cache size in bytes with:
-
-````
-myCache.memoryCache.maxBytes = 26214400; //25MB
-````
-
-You can purge all from memory with:
-
-````
-[myCache.memoryCache purge];
 ````
 
 ## Other Useful Features
