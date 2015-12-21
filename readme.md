@@ -92,7 +92,9 @@ It's easy to load an image:
 NSURL * imageURL;
 __weak ViewController * weakself = self;
 
-[self.imageView loadImageWithURL:imageURL hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
+[self.imageView loadImageWithURL:imageURL
+
+hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
 	
 	//there was a cached image available, use it.
 	weakself.imageView.image = image;
