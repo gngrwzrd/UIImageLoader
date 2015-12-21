@@ -530,6 +530,14 @@ static UIImageDiskCache * _default;
 	}];
 }
 
+- (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
+									   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
+									sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
+							   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted; {
+	NSURLRequest * request = [NSURLRequest requestWithURL:url];
+	return [self loadImageWithRequest:request hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
+}
+
 @end
 
 /********************/
@@ -559,123 +567,6 @@ static UIImageDiskCache * _default;
 	[ar encodeObject:self.etag forKey:@"etag"];
 	[ar encodeDouble:self.maxage forKey:@"maxage"];
 	[ar encodeBool:self.nocache forKey:@"nocache"];
-}
-
-@end
-
-/************************/
-/* UIImageView Addition */
-/************************/
-
-@implementation UIImageView (UIImageDiskCache)
-
-- (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
-	cache:(UIImageDiskCache *) cache
-	hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-	sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-	requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted; {
-	return [cache loadImageWithRequest:request hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
-}
-
-- (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
-									  cache:(UIImageDiskCache *) cache
-								   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-								sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-						   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted; {
-	NSURLRequest * request = [NSURLRequest requestWithURL:url];
-	return [cache loadImageWithRequest:request hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
-}
-
-- (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
-									   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-									sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-							   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted; {
-	return [self loadImageWithRequest:request cache:[UIImageDiskCache defaultDiskCache] hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
-}
-
-- (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
-								  hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-							   sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-						  requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted; {
-	return [self loadImageWithURL:url cache:[UIImageDiskCache defaultDiskCache] hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
-}
-
-@end
-
-/*********************/
-/* UIButton Addition */
-/*********************/
-
-@implementation UIButton (UIImageDiskCache)
-
-- (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
-										  cache:(UIImageDiskCache *) cache
-									   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-									sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-							   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted; {
-	return [cache loadImageWithRequest:request hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
-}
-
-- (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
-									  cache:(UIImageDiskCache *) cache
-								   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-								sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-						   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted; {
-	NSURLRequest * request = [NSURLRequest requestWithURL:url];
-	return [cache loadImageWithRequest:request hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
-}
-
-- (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
-									   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-									sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-							   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted; {
-	return [self loadImageWithRequest:request cache:[UIImageDiskCache defaultDiskCache] hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
-}
-
-- (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
-								   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-								sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-						   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted; {
-	return [self loadImageWithURL:url cache:[UIImageDiskCache defaultDiskCache] hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
-}
-
-@end
-
-/*********************/
-/* UIButton Addition */
-/*********************/
-
-@implementation UIImage (UIImageDiskCache)
-
-- (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
-										  cache:(UIImageDiskCache *) cache
-									   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-									sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-							   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted; {
-	return [cache loadImageWithRequest:request hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
-}
-
-- (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
-									  cache:(UIImageDiskCache *) cache
-								   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-								sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-						   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted; {
-	NSURLRequest * request = [NSURLRequest requestWithURL:url];
-	return [cache loadImageWithRequest:request hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
-}
-
-- (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
-									   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-									sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-							   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted; {
-	return [self loadImageWithRequest:request cache:[UIImageDiskCache defaultDiskCache] hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
-}
-
-- (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
-								   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-								sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-						   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted; {
-	return [self loadImageWithURL:url cache:[UIImageDiskCache defaultDiskCache] hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
 }
 
 @end
