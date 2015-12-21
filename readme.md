@@ -84,6 +84,21 @@ Put some cleanup in app delegate:
 }
 ````
 
+### Image Loaded Source
+
+The enum UIImageLoadSource provides you with where the image was loaded from:
+
+````
+//image source passed in completion callbacks.
+typedef NS_ENUM(NSInteger,UIImageLoadSource) {
+	UIImageLoadSourceDisk,               //image was cached on disk already and loaded from disk
+	UIImageLoadSourceMemory,             //image was in memory cache
+	UIImageLoadSourceNone,               //no source as there was an error
+	UIImageLoadSourceNetworkNotModified, //a network request was sent but existing content is still valid
+	UIImageLoadSourceNetworkToDisk,      //a network request was sent, image was updated on disk
+};
+````
+
 ### Loading an Image
 
 It's easy to load an image:
@@ -91,50 +106,72 @@ It's easy to load an image:
 ````
 UIImageDiskCache * cache = [UIImageDiskCache defaultDiskCache];
 
-NSURL * imageURL;
+NSURL * imageURL = myURL;	
 
-[cache loadImageWithURL:imageURL hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
+[cache loadImageWithURL:imageURL \
+
+hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
+	
+	//there was a cached image available. use that.
 	self.imageView.image = image;
+	
 } sendRequest:^(BOOL didHaveCachedImage) {
 	
+	//a request is being made for the image.
+	
+	if(!didHaveCachedImage) {
+		
+		//there was not a cached image available, set a placeholder or do nothing.
+	    self.imageView.image = [UIImage imageNamed:@"placeholder"];
+	}
+	
 } requestCompleted:^(NSError *error, UIImage *image, UIImageLoadSource loadedFromSource) {
+	
+	//network request finished.
+	
 	if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
+		//the image was downloaded and saved to disk.
+		//since it was downloaded it has been updated since
+		//last cached version, or is brand new
+	
 		self.imageView.image = image;
 	}
 }];
-
-imageURL = [NSURL URLWithString:@"http://i1-news.softpedia-static.com/images/news2/How-To-Change-the-Language-on-Your-iPhone-iPod-touch-2.png"];
-
-[cache loadImageWithURL:imageURL hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
-	[self.button setImage:image forState:UIControlStateNormal];
-} sendRequest:^(BOOL didHaveCachedImage) {
-	
-} requestCompleted:^(NSError *error, UIImage *image, UIImageLoadSource loadedFromSource) {
-	if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
-		[self.button setImage:image forState:UIControlStateNormal];
-	}
-}];
 ````
 
-UIImageView, UIButton, and UIImage have similar additions to load an image.
+### Has Cache Callback
 
-### UIImageLoadSource
-
-UIImageLoadSource gives you some information about where the image was loaded from:
+When you load an image with UIImageDiskCache, the first callback you can use is the hasCache callback. It's defined as:
 
 ````
-//image source passed in completion callbacks.
-typedef NS_ENUM(NSInteger,UIImageLoadSource) {
-	//these will be passed to your hasCache callback
-	UIImageLoadSourceDisk,               //image was cached on disk already and loaded from disk
-	UIImageLoadSourceMemory,             //image was in memory cache
-	
-    //these will be passed to your requestCompleted callback
-	UIImageLoadSourceNone,               //no source as there was an error
-	UIImageLoadSourceNetworkNotModified, //a network request was sent but existing content is still valid
-	UIImageLoadSourceNetworkToDisk,      //a network request was sent, image was updated on disk
-};
+typedef void(^UIImageDiskCache_HasCacheBlock)(UIImage * image, UIImageLoadSource loadedFromSource);
 ````
+
+If a cached image is available, you will get the image, and the source will be either UIImageLoadSourceDisk or UIImageLoadSourceMemory.
+
+### Send Request Callback
+
+You can use this callback for logic to decide if you should show a placeholder, or a loader of some kind. If the image loader needs to make a request for the image, you will receive this callback. It's defined as:
+
+````
+typedef void(^UIImageDiskCache_SendingRequestBlock)(BOOL didHaveCachedImage);
+````
+
+The _didHaveCachedImage_ parameter tells you if a cached image was available (and that your _hasCache_ callback was called).
+
+### Request Completed Callback
+
+This callback runs when the request has finished, and it provides you with enough info to write logic. It's defined as:
+
+````
+typedef void(^UIImageDiskCache_RequestCompletedBlock)(NSError * error, UIImage * image, UIImageLoadSource loadedFromSource);
+````
+
+If a network error occurs, you'll have an error object and UIImageLoadSourceNone.
+
+If load source is UIImageLoadSourceNetworkToDisk, it means a new image was downloaded. This can mean either it was a new download, or existing cache was updated.
+
+If load source is UIImageLoadSourceNetworkNotModified, it means the cached image is still valid.
 
 ### NSURLSession
 
