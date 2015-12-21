@@ -101,60 +101,87 @@ extern const NSInteger UIImageDiskCacheErrorNilURL;
 
 @interface UIImageView (UIImageDiskCache) <NSURLSessionDelegate>
 
-- (NSURLSessionDataTask *) setImageWithURL:(NSURL *) url
+- (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
 									 cache:(UIImageDiskCache *) cache
 								  hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
 							   sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
 						  requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
 
-- (NSURLSessionDataTask *) setImageWithURL:(NSURL *) url
+- (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
 								  hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
 							   sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
 						  requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
 
-- (NSURLSessionDataTask *) setImageWithRequest:(NSURLRequest *) request
+- (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
 										 cache:(UIImageDiskCache *) cache
 									  hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
 								   sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
 							  requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
 
-- (NSURLSessionDataTask *) setImageWithRequest:(NSURLRequest *) request
+- (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
 									  hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
 								   sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
 							  requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
 
 @end
 
-///**************************/
-///*   UIButton Additions   */
-///**************************/
-//
-//
-//@interface UIButton (UIImageDiskCache)
-//
-//- (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withURL:(NSURL *) url completion:(UIImageDiskCacheCompletion) completion;
-//- (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withURL:(NSURL *) url customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
-//- (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request completion:(UIImageDiskCacheCompletion) completion;
-//- (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
-//
-//- (NSURLSessionDataTask *) setBackgroundImageForControlState:(UIControlState) controlState withURL:(NSURL *) url completion:(UIImageDiskCacheCompletion) completion;
-//- (NSURLSessionDataTask *) setBackgroundImageForControlState:(UIControlState) controlState withURL:(NSURL *) url customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
-//- (NSURLSessionDataTask *) setBackgroundImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request completion:(UIImageDiskCacheCompletion) completion;
-//- (NSURLSessionDataTask *) setBackgroundImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
-//
-//@end
-//
-// 
-///***************************/
-///**   UIImage Additions   **/
-///***************************/
-//
-//
-//@interface UIImage (UIImageDiskCache)
-//
-//- (NSURLSessionDataTask *) downloadImageWithURL:(NSURL *) url completion:(UIImageDiskCacheCompletion) completion;
-//- (NSURLSessionDataTask *) downloadImageWithURL:(NSURL *) url customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
-//- (NSURLSessionDataTask *) downloadImageWithRequest:(NSURLRequest *) request completion:(UIImageDiskCacheCompletion) completion;
-//- (NSURLSessionDataTask *) downloadImageWithRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion)completion;
-//
-//@end
+/**************************/
+/*   UIButton Additions   */
+/**************************/
+
+@interface UIButton (UIImageDiskCache)
+
+- (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
+									  cache:(UIImageDiskCache *) cache
+								   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
+								sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
+						   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
+
+- (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
+								   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
+								sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
+						   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
+
+- (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
+										  cache:(UIImageDiskCache *) cache
+									   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
+									sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
+							   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
+
+- (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
+									   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
+									sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
+							   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
+
+@end
+
+/***************************/
+/**   UIImage Additions   **/
+/***************************/
+
+
+@interface UIImage (UIImageDiskCache)
+
+- (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
+									  cache:(UIImageDiskCache *) cache
+								   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
+								sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
+						   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
+
+- (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
+								   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
+								sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
+						   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
+
+- (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
+										  cache:(UIImageDiskCache *) cache
+									   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
+									sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
+							   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
+
+- (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
+									   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
+									sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
+							   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
+
+@end

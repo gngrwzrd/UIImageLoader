@@ -20,7 +20,7 @@
 	
 	__weak ViewController * weakself = self;
 	
-	[self.imageView setImageWithURL:imageURL hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
+	[self.imageView loadImageWithURL:imageURL hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
 		weakself.imageView.image = image;
 	} sendRequest:^(BOOL didHaveCachedImage) {
 		
@@ -30,10 +30,18 @@
 		}
 	}];
 	
-//	imageURL = [NSURL URLWithString:@"http://i1-news.softpedia-static.com/images/news2/How-To-Change-the-Language-on-Your-iPhone-iPod-touch-2.png"];
-//	[self.button setImageForControlState:UIControlStateNormal withURL:imageURL completion:^(NSError *error, UIImage *image, NSURL * url, UIImageLoadSource loadSource) {
-//		
-//	}];
+	imageURL = [NSURL URLWithString:@"http://i1-news.softpedia-static.com/images/news2/How-To-Change-the-Language-on-Your-iPhone-iPod-touch-2.png"];
+	
+	[self.button loadImageWithURL:imageURL hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
+		[self.button setImage:image forState:UIControlStateNormal];
+	} sendRequest:^(BOOL didHaveCachedImage) {
+		
+	} requestCompleted:^(NSError *error, UIImage *image, UIImageLoadSource loadedFromSource) {
+		if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
+			[self.button setImage:image forState:UIControlStateNormal];
+		}
+	}];
+	
 }
 
 @end
