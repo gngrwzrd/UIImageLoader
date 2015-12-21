@@ -1,7 +1,9 @@
 
 #import <UIKit/UIKit.h>
 
+/************************/
 /** UIImageMemoryCache **/
+/************************/
 
 @interface UIImageMemoryCache : NSObject
 
@@ -19,15 +21,17 @@
 
 @end
 
-/** UIImageDiskCache **/
+/********************/
+/* UIImageDiskCache */
+/********************/
 
 //image source passed in completion callbacks.
 typedef NS_ENUM(NSInteger,UIImageLoadSource) {
-	//these will be passed to your hasCacheBlock callback
+	//these will be passed to your hasCache callback
 	UIImageLoadSourceDisk,               //image was cached on disk already and loaded from disk
 	UIImageLoadSourceMemory,             //image was in memory cache
 	
-    //these will be passed to your requestFinishedBlock callback
+    //these will be passed to your requestCompleted callback
 	UIImageLoadSourceNone,               //no source as there was an error
 	UIImageLoadSourceNetworkNotModified, //a network request was sent but existing content is still valid
 	UIImageLoadSourceNetworkToDisk,      //a network request was sent, image was updated on disk
@@ -91,9 +95,9 @@ extern const NSInteger UIImageDiskCacheErrorNilURL;
 
 @end
 
-/*****************************/
-/**  UIImageView Additions  **/
-/*****************************/
+/***************************/
+/*  UIImageView Additions  */
+/***************************/
 
 @interface UIImageView (UIImageDiskCache) <NSURLSessionDelegate>
 
@@ -121,9 +125,9 @@ extern const NSInteger UIImageDiskCacheErrorNilURL;
 
 @end
 
-///****************************/
-///**   UIButton Additions   **/
-///****************************/
+///**************************/
+///*   UIButton Additions   */
+///**************************/
 //
 //
 //@interface UIButton (UIImageDiskCache)

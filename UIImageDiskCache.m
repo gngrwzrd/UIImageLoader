@@ -155,7 +155,7 @@ static UIImageDiskCache * _default;
 	}
 	
 	NSURLSessionConfiguration * config = [NSURLSessionConfiguration defaultSessionConfiguration];
-	self.activeSession = [NSURLSession sessionWithConfiguration:config delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+	self.activeSession = [NSURLSession sessionWithConfiguration:config delegate:self delegateQueue:[[NSOperationQueue alloc] init]];
 	
 	return self.activeSession;
 }
@@ -209,9 +209,7 @@ static UIImageDiskCache * _default;
 	dispatch_async(background, ^{
 		[data writeToFile:cachedURL.path atomically:TRUE];
 		if(writeCompletion) {
-			dispatch_async(dispatch_get_main_queue(), ^{
-				writeCompletion(cachedURL,data);
-			});
+			writeCompletion(cachedURL,data);
 		}
 	});
 }
@@ -226,21 +224,16 @@ static UIImageDiskCache * _default;
 	});
 }
 
-- (void) loadImageInBackground:(NSURL *) diskURL imageURL:(NSURL *) imageURL completion:(UIImageLoadedBlock) completion {
+- (void) loadImageInBackground:(NSURL *) diskURL completion:(UIImageLoadedBlock) completion {
 	dispatch_queue_t background = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND,0);
 	dispatch_async(background, ^{
 		NSDate * modified = [NSDate date];
 		NSDictionary * attributes = @{NSFileModificationDate:modified};
 		[[NSFileManager defaultManager] setAttributes:attributes ofItemAtPath:diskURL.path error:nil];
 		UIImage * image = [UIImage imageWithContentsOfFile:diskURL.path];
-		if(self.cacheImagesInMemory) {
-			[self.memoryCache cacheImage:image forURL:imageURL];
+		if(completion) {
+			completion(image);
 		}
-		dispatch_async(dispatch_get_main_queue(), ^{
-			if(completion) {
-				completion(image);
-			}
-		});
 	});
 }
 
@@ -310,10 +303,8 @@ static UIImageDiskCache * _default;
 			return nil;
 		} else {
 			didSendCacheCompletion = TRUE;
-			dispatch_async(dispatch_get_main_queue(), ^{
-				//call placeholder completion and continue load below
-				hasCache(cachedImageURL);
-			});
+			//call placeholder completion and continue load below
+			hasCache(cachedImageURL);
 		}
 	} else {
 		if(self.logCacheMisses) {
@@ -338,90 +329,85 @@ static UIImageDiskCache * _default;
 		}
 	}
 	
-	dispatch_async(dispatch_get_main_queue(), ^{
-		sendRequest(didSendCacheCompletion);
-	});
+	sendRequest(didSendCacheCompletion);
 	
 	__weak UIImageDiskCache * weakself = self;
 	
 	NSURLSessionDataTask * task = [[self session] dataTaskWithRequest:mutableRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-		dispatch_async(dispatch_get_main_queue(), ^{
-			if(error) {
-				requestCompleted(error,nil,UIImageLoadSourceNone);
-				return;
-			}
-			
-			NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *)response;
-			NSDictionary * headers = [httpResponse allHeaderFields];
-			
-			//304 Not Modified. Use Cache.
-			if(httpResponse.statusCode == 304) {
-				
-				if(headers[@"Cache-Control"]) {
-					NSString * control = headers[@"Cache-Control"];
-					[self setCacheControlForCacheInfo:cached fromCacheControlString:control];
-					[self writeCacheControlData:cached toFile:cacheInfoFile];
-				}
-				
-				requestCompleted(nil,cachedImageURL,UIImageLoadSourceNetworkNotModified);
-				return;
-			}
-			
-			//status not OK, error.
-			if(httpResponse.statusCode != 200) {
-				NSString * message = [NSString stringWithFormat:@"Invalid image cache response %li",(long)httpResponse.statusCode];
-				requestCompleted([NSError errorWithDomain:UIImageDiskCacheErrorDomain code:UIImageDiskCacheErrorResponseCode userInfo:@{NSLocalizedDescriptionKey:message}],nil,UIImageLoadSourceNone);
-				return;
-			}
-			
-			//check that content type is an image.
-			NSString * contentType = headers[@"Content-Type"];
-			if(![weakself acceptedContentType:contentType]) {
-				requestCompleted([NSError errorWithDomain:UIImageDiskCacheErrorDomain code:UIImageDiskCacheErrorContentType userInfo:@{NSLocalizedDescriptionKey:@"Response was not an image"}],nil,UIImageLoadSourceNone);
-				return;
-			}
-			
-			//check response for etag and cache control
-			if(!headers[@"ETag"] && !headers[@"Cache-Control"]) {
-				if(self.logResponseWarnings) {
-					NSLog(@"[UIImageDiskCache] WARNING: You are loading images using the server cache control but the server returned neither ETag or Cache-Control. "
-						  @"Images will continue to load every time the image is needed. "
-						  @"URL: %@",mutableRequest.URL);
-				}
-			}
-			
-			if(headers[@"ETag"]) {
-				cached.etag = headers[@"ETag"];
-				
-				if(self.etagOnlyCacheControl > 0) {
-					cached.maxage = self.etagOnlyCacheControl;
-				}
-				
-				if(!headers[@"Cache-Control"] && self.etagOnlyCacheControl < 1) {
-					if(self.logResponseWarnings ) {
-						NSLog(@"[UIImageDiskCache] WARNING: Image response header ETag is set but no Cache-Control is available. "
-							  @"You can set a custom cache control for this scenario with the etagOnlyCacheControl property. "
-							  @"Image requests will always be sent, the response may or may not be 304. "
-							  @"Optionally add Cache-Control policies to the server to correctly have content expire locally. "
-							  @"URL: %@",mutableRequest.URL);
-					}
-				}
-			}
+		if(error) {
+			requestCompleted(error,nil,UIImageLoadSourceNone);
+			return;
+		}
+		
+		NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *)response;
+		NSDictionary * headers = [httpResponse allHeaderFields];
+		
+		//304 Not Modified. Use Cache.
+		if(httpResponse.statusCode == 304) {
 			
 			if(headers[@"Cache-Control"]) {
 				NSString * control = headers[@"Cache-Control"];
 				[self setCacheControlForCacheInfo:cached fromCacheControlString:control];
+				[self writeCacheControlData:cached toFile:cacheInfoFile];
 			}
 			
-			//save cached info file
-			[weakself writeCacheControlData:cached toFile:cacheInfoFile];
+			requestCompleted(nil,cachedImageURL,UIImageLoadSourceNetworkNotModified);
+			return;
+		}
+		
+		//status not OK, error.
+		if(httpResponse.statusCode != 200) {
+			NSString * message = [NSString stringWithFormat:@"Invalid image cache response %li",(long)httpResponse.statusCode];
+			requestCompleted([NSError errorWithDomain:UIImageDiskCacheErrorDomain code:UIImageDiskCacheErrorResponseCode userInfo:@{NSLocalizedDescriptionKey:message}],nil,UIImageLoadSourceNone);
+			return;
+		}
+		
+		//check that content type is an image.
+		NSString * contentType = headers[@"Content-Type"];
+		if(![weakself acceptedContentType:contentType]) {
+			requestCompleted([NSError errorWithDomain:UIImageDiskCacheErrorDomain code:UIImageDiskCacheErrorContentType userInfo:@{NSLocalizedDescriptionKey:@"Response was not an image"}],nil,UIImageLoadSourceNone);
+			return;
+		}
+		
+		//check response for etag and cache control
+		if(!headers[@"ETag"] && !headers[@"Cache-Control"]) {
+			if(self.logResponseWarnings) {
+				NSLog(@"[UIImageDiskCache] WARNING: You are loading images using the server cache control but the server returned neither ETag or Cache-Control. "
+					  @"Images will continue to load every time the image is needed. "
+					  @"URL: %@",mutableRequest.URL);
+			}
+		}
+		
+		if(headers[@"ETag"]) {
+			cached.etag = headers[@"ETag"];
 			
-			//save image to disk
-			[weakself writeData:data toFile:cachedImageURL writeCompletion:^(NSURL *url, NSData *data) {
-				requestCompleted(nil,cachedImageURL,UIImageLoadSourceNetworkToDisk);
-			}];
+			if(self.etagOnlyCacheControl > 0) {
+				cached.maxage = self.etagOnlyCacheControl;
+			}
 			
-		});
+			if(!headers[@"Cache-Control"] && self.etagOnlyCacheControl < 1) {
+				if(self.logResponseWarnings ) {
+					NSLog(@"[UIImageDiskCache] WARNING: Image response header ETag is set but no Cache-Control is available. "
+						  @"You can set a custom cache control for this scenario with the etagOnlyCacheControl property. "
+						  @"Image requests will always be sent, the response may or may not be 304. "
+						  @"Optionally add Cache-Control policies to the server to correctly have content expire locally. "
+						  @"URL: %@",mutableRequest.URL);
+				}
+			}
+		}
+		
+		if(headers[@"Cache-Control"]) {
+			NSString * control = headers[@"Cache-Control"];
+			[self setCacheControlForCacheInfo:cached fromCacheControlString:control];
+		}
+		
+		//save cached info file
+		[weakself writeCacheControlData:cached toFile:cacheInfoFile];
+		
+		//save image to disk
+		[weakself writeData:data toFile:cachedImageURL writeCompletion:^(NSURL *url, NSData *data) {
+			requestCompleted(nil,cachedImageURL,UIImageLoadSourceNetworkToDisk);
+		}];
 	}];
 	
 	[task resume];
@@ -450,9 +436,7 @@ static UIImageDiskCache * _default;
 	
 	NSURL * cachedURL = [self localFileURLForURL:mutableRequest.URL];
 	if([[NSFileManager defaultManager] fileExistsAtPath:cachedURL.path]) {
-		dispatch_async(dispatch_get_main_queue(), ^{
-			hasCache(cachedURL);
-		});
+		hasCache(cachedURL);
 		return nil;
 	}
 	
@@ -460,39 +444,34 @@ static UIImageDiskCache * _default;
 		NSLog(@"[UIImageDiskCache] cache miss for url: %@",mutableRequest.URL);
 	}
 	
-	dispatch_async(dispatch_get_main_queue(), ^{
-		sendRequest(FALSE);
-	});
+	sendRequest(FALSE);
 	
 	__weak UIImageDiskCache * weakSelf = self;
 	
 	NSURLSessionDataTask * task = [[self session] dataTaskWithRequest:mutableRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-		dispatch_async(dispatch_get_main_queue(), ^{
-			if(error) {
-				requestComplete(error,nil,UIImageLoadSourceNone);
-				return;
-			}
-			
-			NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *)response;
-			if(httpResponse.statusCode != 200) {
-				NSString * message = [NSString stringWithFormat:@"Invalid image cache response %li",(long)httpResponse.statusCode];
-				requestComplete([NSError errorWithDomain:UIImageDiskCacheErrorDomain code:UIImageDiskCacheErrorResponseCode userInfo:@{NSLocalizedDescriptionKey:message}],nil,UIImageLoadSourceNone);
-				return;
-			}
-			
-			NSString * contentType = [[httpResponse allHeaderFields] objectForKey:@"Content-Type"];
-			if(![weakSelf acceptedContentType:contentType]) {
-				requestComplete([NSError errorWithDomain:UIImageDiskCacheErrorDomain code:UIImageDiskCacheErrorContentType userInfo:@{NSLocalizedDescriptionKey:@"Response was not an image"}],nil,UIImageLoadSourceNone);
-				return;
-			}
-			
-			if(data) {
-				
-				[weakSelf writeData:data toFile:cachedURL writeCompletion:^(NSURL *url, NSData *data) {
-					requestComplete(nil,cachedURL,UIImageLoadSourceNetworkToDisk);
-				}];
-			}
-		});
+		if(error) {
+			requestComplete(error,nil,UIImageLoadSourceNone);
+			return;
+		}
+		
+		NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *)response;
+		if(httpResponse.statusCode != 200) {
+			NSString * message = [NSString stringWithFormat:@"Invalid image cache response %li",(long)httpResponse.statusCode];
+			requestComplete([NSError errorWithDomain:UIImageDiskCacheErrorDomain code:UIImageDiskCacheErrorResponseCode userInfo:@{NSLocalizedDescriptionKey:message}],nil,UIImageLoadSourceNone);
+			return;
+		}
+		
+		NSString * contentType = [[httpResponse allHeaderFields] objectForKey:@"Content-Type"];
+		if(![weakSelf acceptedContentType:contentType]) {
+			requestComplete([NSError errorWithDomain:UIImageDiskCacheErrorDomain code:UIImageDiskCacheErrorContentType userInfo:@{NSLocalizedDescriptionKey:@"Response was not an image"}],nil,UIImageLoadSourceNone);
+			return;
+		}
+		
+		if(data) {
+			[weakSelf writeData:data toFile:cachedURL writeCompletion:^(NSURL *url, NSData *data) {
+				requestComplete(nil,cachedURL,UIImageLoadSourceNetworkToDisk);
+			}];
+		}
 	}];
 	
 	[task resume];
@@ -548,28 +527,40 @@ static UIImageDiskCache * _default;
 	//check memory cache
 	UIImage * image = [cache.memoryCache.cache objectForKey:request.URL.path];
 	if(image) {
-		hasCache(image,UIImageLoadSourceMemory);
+		dispatch_async(dispatch_get_main_queue(), ^{
+			hasCache(image,UIImageLoadSourceMemory);
+		});
 		return nil;
 	}
 	
 	return [cache cacheImageWithRequest:request hasCache:^(NSURL *diskURL) {
 		
-		[cache loadImageInBackground:diskURL imageURL:request.URL completion:^(UIImage *image) {
+		[cache loadImageInBackground:diskURL completion:^(UIImage *image) {
+			[cache.memoryCache cacheImage:image forURL:request.URL];
 			dispatch_async(dispatch_get_main_queue(), ^{
 				hasCache(image,UIImageLoadSourceDisk);
 			});
 		}];
 		
-	} sendRequest:sendRequest requestComplete:^(NSError *error, NSURL *diskURL, UIImageLoadSource loadedFromSource) {
+	} sendRequest:^(BOOL didHaveCache) {
+		
+		dispatch_async(dispatch_get_main_queue(), ^{
+			sendRequest(didHaveCache);
+		});
+		
+	} requestComplete:^(NSError *error, NSURL *diskURL, UIImageLoadSource loadedFromSource) {
 		
 		if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
-			[cache loadImageInBackground:diskURL imageURL:request.URL completion:^(UIImage *image) {
+			[cache loadImageInBackground:diskURL completion:^(UIImage *image) {
+				[cache.memoryCache cacheImage:image forURL:request.URL];
 				dispatch_async(dispatch_get_main_queue(), ^{
 					requestCompleted(error,image,loadedFromSource);
 				});
 			}];
 		} else {
-			requestCompleted(error,nil,loadedFromSource);
+			dispatch_async(dispatch_get_main_queue(), ^{
+				requestCompleted(error,nil,loadedFromSource);
+			});
 		}
 		
 	}];
