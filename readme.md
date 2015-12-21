@@ -89,31 +89,30 @@ Put some cleanup in app delegate:
 It's easy to load an image:
 
 ````
+UIImageDiskCache * cache = [UIImageDiskCache defaultDiskCache];
+
 NSURL * imageURL;
-__weak ViewController * weakself = self;
 
-[self.imageView loadImageWithURL:imageURL
-
-hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
-	
-	//there was a cached image available, use it.
-	weakself.imageView.image = image;
-
+[cache loadImageWithURL:imageURL hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
+	self.imageView.image = image;
 } sendRequest:^(BOOL didHaveCachedImage) {
 	
-	//a network request is being sent to get the image.
-	//if there wasn't a cache image available, set a placeholder or ignore.
-	if(!didHaveCachedImage) {
-	    weakself.imageView.image = [UIImage imageNamed:@"placeholder.png"];
+} requestCompleted:^(NSError *error, UIImage *image, UIImageLoadSource loadedFromSource) {
+	if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
+		self.imageView.image = image;
 	}
+}];
+
+imageURL = [NSURL URLWithString:@"http://i1-news.softpedia-static.com/images/news2/How-To-Change-the-Language-on-Your-iPhone-iPod-touch-2.png"];
+
+[cache loadImageWithURL:imageURL hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
+	[self.button setImage:image forState:UIControlStateNormal];
+} sendRequest:^(BOOL didHaveCachedImage) {
 	
 } requestCompleted:^(NSError *error, UIImage *image, UIImageLoadSource loadedFromSource) {
-	
-	//the network request finished, the image was downloaded and saved to disk.
 	if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
-		weakself.imageView.image = image;
+		[self.button setImage:image forState:UIControlStateNormal];
 	}
-	
 }];
 ````
 
