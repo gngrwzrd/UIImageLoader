@@ -1,12 +1,12 @@
-# UIImageDiskCache
+# UIImageLoader
 
-UIImageDiskCache is a helper to cache images on disk with additions for UIImage, UIImageView and UIButton.
+UIImageLoader is a helper to load images from the web, but also cache them on disk and optionally in memory. It makes it super simple to write handler code for cached versions, set a placeholder when a network request is being made, and handle any errors on request completion.
 
-It supports server cache control policies to re-download images when expired. Server cache control logic is implemented manually instead of using an NSURLCache for performance reasons.
+It supports server cache control to re-download images when expired. Cache control logic is implemented manually instead of using an NSURLCache for performance reasons.
 
 You can also completely ignore server cache control and manually clean-up images yourself.
 
-It's very small at roughly 700+ lines of code in a single header / implementation file.
+It's very small at roughly 500+ lines of code in a single header / implementation file.
 
 Everything is asynchronous and uses modern objective-c with libdispatch and NSURLSession.
 
@@ -16,87 +16,47 @@ This isn't intended to compete with other frameworks that are optimized to provi
 
 For average apps that would like to cache images on disk and have some options to control caching, this will make a noticeable difference.
 
-My particular use case was a better disk cache that isn't NSURLCache. It provides better options for handling how server cache control policies are used. And get rid of delays or flickering that happens because of NSURLCache being slow.
+My particular use case was a better disk cache that isn't NSURLCache. It provides better options for handling how server cache control is used. And get rid of delays or flickering that happens because of NSURLCache being slow.
 
 ## No Flickering or Noticeable Delayed Loads For Cached Images
 
 Images that are cached and available on disk load into UIImageView or UIButton almost immediatly. This is most noticeable on table view cells.
 
-## Server Cache Policies
+You can also cache images in memory for even faster loading.
+
+## Server Cache Control
 
 It works with servers that support ETag/If-None-Match and Cache-Control headers.
 
-If the server responds with only ETag you can optionally cache the image for a default amount of time. Or don't cache it at all and send requests each time to check for modified content.
+If the server responds with only ETag you can optionally cache the image for a default amount of time. Or let the loader make requests each time to check for new content.
 
 If a response is 304 it uses the cached image available on disk.
 
 ## Installation
 
-Download, fork, clone or submodule this repo. Then add UIImageDiskCache.h/m to your Xcode project.
+Download, fork, clone or submodule this repo. Then add UIImageLoader.h/m to your Xcode project.
 
-## UIImageDiskCache Object
+## UIImageLoader Object
 
-There's a default configured cache which you're free to configure how you like.
+There's a default configured loader which you're free to configure how you like.
 
 ````
-UIImageDiskCache * cache = [UIImageDiskCache defaultDiskCache];
-//set cache properties here.
+//this is default configuration:
+UIImageLoader * loader = [UIImageLoader defaultLoader];
+loader.cacheImagesInMemory = FALSE;
+loader.trustAnySSLCertificate  = FALSE;
+loader.useServerCachePolicy = TRUE;
+loader.logCacheMisses = TRUE;
+loader.logResponseWarnings = TRUE;
+loader.etagOnlyCacheControl = 0;
+loader.memoryCache.maxBytes = 25 * (1024 * 1024); //25MB;
 ````
 
 Or you can setup your own and configure it:
 
 ````
-UIImageDiskCache * cache = [[UIImageDiskCache alloc] init];
-//set cache properties here.
-````
-
-By default the cache will use server cache control policies. You can disable server cache control:
-
-````
-myCache.useServerCachePolicy = FALSE;
-````
-
-For responses that return an ETag header but no Cache-Control header you can set a default amount of time to cache those images for:
-
-````
-myCache.etagOnlyCacheControl = 604800; //1 week;
-myCache.etagOnlyCacheControl = 0;      //(default) always send request to see if there's new content.
-````
-
-### Manual Disk Cache Cleanup
-
-If you ignore server cache control you should put some kind of cleanup to remove old files. There are a few helper methods available:
-
-````
-- (void) clearCachedFilesOlderThan1Day;
-- (void) clearCachedFilesOlderThan1Week;
-- (void) clearCachedFilesOlderThan:(NSTimeInterval) timeInterval;
-````
-
-These methods use the file modified date to decide which to delete. Images that are used frequently will not be removed. When an image is accessed using the cache the modified date is updated.
-
-Put some cleanup in app delegate:
-
-````
-- (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    UIImageDiskCache * cache = [UIImageDiskCache defaultDiskCache];
-    [cache clearCachedFilesOlderThan1Week];
-}
-````
-
-### Image Loaded Source
-
-The enum UIImageLoadSource provides you with where the image was loaded from:
-
-````
-//image source passed in completion callbacks.
-typedef NS_ENUM(NSInteger,UIImageLoadSource) {
-	UIImageLoadSourceDisk,               //image was cached on disk already and loaded from disk
-	UIImageLoadSourceMemory,             //image was in memory cache
-	UIImageLoadSourceNone,               //no source as there was an error
-	UIImageLoadSourceNetworkNotModified, //a network request was sent but existing content is still valid
-	UIImageLoadSourceNetworkToDisk,      //a network request was sent, image was updated on disk
-};
+UIImageLoader * loader = [[UIImageLoader alloc] init];
+//set loader properties here.
 ````
 
 ### Loading an Image
@@ -104,7 +64,7 @@ typedef NS_ENUM(NSInteger,UIImageLoadSource) {
 It's easy to load an image:
 
 ````
-UIImageDiskCache * cache = [UIImageDiskCache defaultDiskCache];
+UIImageLoader * cache = [UIImageLoader defaultLoader];
 
 NSURL * imageURL = myURL;	
 
@@ -139,39 +99,91 @@ hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
 }];
 ````
 
-### Has Cache Callback
+### Image Loaded Source
 
-When you load an image with UIImageDiskCache, the first callback you can use is the hasCache callback. It's defined as:
+The enum UIImageLoadSource provides you with where the image was loaded from:
 
 ````
-typedef void(^UIImageDiskCache_HasCacheBlock)(UIImage * image, UIImageLoadSource loadedFromSource);
+//image source passed in completion callbacks.
+typedef NS_ENUM(NSInteger,UIImageLoadSource) {
+	UIImageLoadSourceDisk,               //image was cached on disk already and loaded from disk
+	UIImageLoadSourceMemory,             //image was in memory cache
+	UIImageLoadSourceNone,               //no source as there was an error
+	UIImageLoadSourceNetworkNotModified, //a network request was sent but existing content is still valid
+	UIImageLoadSourceNetworkToDisk,      //a network request was sent, image was updated on disk
+};
+````
+
+### Has Cache Callback
+
+When you load an image with UIImageLoader, the first callback you can use is the _hasCache_ callback. It's defined as:
+
+````
+typedef void(^UIImageLoader_HasCacheBlock)(UIImage * image, UIImageLoadSource loadedFromSource);
 ````
 
 If a cached image is available, you will get the image, and the source will be either UIImageLoadSourceDisk or UIImageLoadSourceMemory.
 
 ### Send Request Callback
 
-You can use this callback for logic to decide if you should show a placeholder, or a loader of some kind. If the image loader needs to make a request for the image, you will receive this callback. It's defined as:
+You can use this callback to decide if you should show a placeholder or loader of some kind. If the image loader needs to make a request for the image, you will receive this callback. It's defined as:
 
 ````
-typedef void(^UIImageDiskCache_SendingRequestBlock)(BOOL didHaveCachedImage);
+typedef void(^UIImageLoader_SendingRequestBlock)(BOOL didHaveCachedImage);
 ````
 
 The _didHaveCachedImage_ parameter tells you if a cached image was available (and that your _hasCache_ callback was called).
 
 ### Request Completed Callback
 
-This callback runs when the request has finished, and it provides you with enough info to write logic. It's defined as:
+This callback runs when the request has finished. It's defined as:
 
 ````
-typedef void(^UIImageDiskCache_RequestCompletedBlock)(NSError * error, UIImage * image, UIImageLoadSource loadedFromSource);
+typedef void(^UIImageLoader_RequestCompletedBlock)(NSError * error, UIImage * image, UIImageLoadSource loadedFromSource);
 ````
 
-If a network error occurs, you'll have an error object and UIImageLoadSourceNone.
+If a network error occurs, you'll receive an _error_ object and _UIImageLoadSourceNone_.
 
-If load source is UIImageLoadSourceNetworkToDisk, it means a new image was downloaded. This can mean either it was a new download, or existing cache was updated.
+If load source is _UIImageLoadSourceNetworkToDisk_, it means a new image was downloaded. This can mean either it was a new download, or existing cache was updated. You should use the new image provided.
 
-If load source is UIImageLoadSourceNetworkNotModified, it means the cached image is still valid.
+If load source is _UIImageLoadSourceNetworkNotModified_, it means the cached image is still valid. You won't receive an image in this case as the image was already passed to your _hasCache_ callback.
+
+### Manual Cache Cleanup
+
+If you aren't using server cache control, you can use a few helper methods to cleanup images on disk:
+
+````
+- (void) clearCachedFilesOlderThan1Day;
+- (void) clearCachedFilesOlderThan1Week;
+- (void) clearCachedFilesOlderThan:(NSTimeInterval) timeInterval;
+````
+
+These methods use the file modified date to decide which to delete.
+
+When an image is accessed using the loader the modified date is updated.
+
+Images that are used frequently will not be removed. 
+
+It's easy to put some cleanup in app delegate:
+
+````
+- (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    UIImageLoader * cache = [UIImageLoader defaultLoader];
+    [cache clearCachedFilesOlderThan1Week];
+}
+````
+
+
+### 304 Not Modified Images
+
+For image responses that return a 304, but don't include a Cache-Control header (expiration), the default behavior is to always send requests to check for new content. Even if there's a cached version available, a network request would still be sent.
+
+You can set a default cache time for this scenario in order to stop these requests.
+
+````
+myCache.etagOnlyCacheControl = 604800; //1 week;
+myCache.etagOnlyCacheControl = 0;      //(default) always send request to see if there's new content.
+````
 
 ### NSURLSession
 
@@ -185,7 +197,7 @@ If you do change the session, you are responsible for implementing it's delegate
 
 ### NSURLSessionDataTask
 
-Each helper method on UIImage, UIImageView, and UIButton returns an NSURLSessionDataTask. You can either use it or ignore it. It's useful if you ever needed to cancel an image request.
+Each load method returns the NSURLSessionDataTask used for network requests. You can either ignore it, or keep it. It's useful for canceling requests if needed.
 
 ## Other Useful Features
 
@@ -194,7 +206,7 @@ Each helper method on UIImage, UIImageView, and UIButton returns an NSURLSession
 If you need to support self signed certificates you can use (false by default):
 
 ````
-myCache.trustAnySSLCertificate = TRUE;
+myLoader.trustAnySSLCertificate = TRUE;
 ````
 
 ### Auth Basic Password Protected Directories/Images
@@ -202,7 +214,7 @@ myCache.trustAnySSLCertificate = TRUE;
 You can set default user/pass that gets sent in every request with:
 
 ````
-[myCache setAuthUsername:@"username" password:@"password"];
+[myLoader setAuthUsername:@"username" password:@"password"];
 ````
 
 
