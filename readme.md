@@ -81,10 +81,11 @@ hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
 	
 	if(!didHaveCachedImage) {
 		
+		self.loader.hidden = FALSE;
+	    [self.loader startAnimating];
+		
 		//there was not a cached image available, set a placeholder or do nothing.
 	    self.imageView.image = [UIImage imageNamed:@"placeholder"];
-	    self.loader.hidden = FALSE;
-	    [self.loader startAnimating];
 	}
 	
 } requestCompleted:^(NSError *error, UIImage *image, UIImageLoadSource loadedFromSource) {
