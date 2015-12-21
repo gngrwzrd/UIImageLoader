@@ -319,7 +319,11 @@ static UIImageDiskCache * _default;
 	if(cached.etag) {
 		[mutableRequest setValue:cached.etag forHTTPHeaderField:@"If-None-Match"];
 		
-		if(cached.maxage == 0) {
+		if(self.etagOnlyCacheControl > 0) {
+			cached.maxage = self.etagOnlyCacheControl;
+		}
+		
+		if(cached.maxage == 0  && self.etagOnlyCacheControl < 1) {
 			if(self.logResponseWarnings) {
 				NSLog(@"[UIImageDiskCache] WARNING: Cached Image response ETag is set but no Cache-Control is available. "
 					  @"Image requests will always be sent, the response may or may not be 304. "
