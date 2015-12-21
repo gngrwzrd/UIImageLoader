@@ -22,7 +22,7 @@
 @end
 
 /********************/
-/* UIImageDiskCache */
+/* UIImageLoader */
 /********************/
 
 //image source passed in completion callbacks.
@@ -38,21 +38,21 @@ typedef NS_ENUM(NSInteger,UIImageLoadSource) {
 };
 
 //forward
-@class UIImageDiskCache;
+@class UIImageLoader;
 
 //completion block
-typedef void(^UIImageDiskCache_HasCacheBlock)(UIImage * image, UIImageLoadSource loadedFromSource);
-typedef void(^UIImageDiskCache_SendingRequestBlock)(BOOL didHaveCachedImage);
-typedef void(^UIImageDiskCache_RequestCompletedBlock)(NSError * error, UIImage * image, UIImageLoadSource loadedFromSource);
+typedef void(^UIImageLoader_HasCacheBlock)(UIImage * image, UIImageLoadSource loadedFromSource);
+typedef void(^UIImageLoader_SendingRequestBlock)(BOOL didHaveCachedImage);
+typedef void(^UIImageLoader_RequestCompletedBlock)(NSError * error, UIImage * image, UIImageLoadSource loadedFromSource);
 
 //error constants
-extern NSString * const UIImageDiskCacheErrorDomain;
-extern const NSInteger UIImageDiskCacheErrorResponseCode;
-extern const NSInteger UIImageDiskCacheErrorContentType;
-extern const NSInteger UIImageDiskCacheErrorNilURL;
+extern NSString * const UIImageLoaderErrorDomain;
+extern const NSInteger UIImageLoaderErrorResponseCode;
+extern const NSInteger UIImageLoaderErrorContentType;
+extern const NSInteger UIImageLoaderErrorNilURL;
 
-//use the +defaultDiskCache or create a new one to customize properties.
-@interface UIImageDiskCache : NSObject <NSURLSessionDelegate>
+//use the +defaultLoader or create a new one to customize properties.
+@interface UIImageLoader : NSObject <NSURLSessionDelegate>
 
 //memory cache where images get stored if cacheImagesInMemory is on.
 @property UIImageMemoryCache * memoryCache;
@@ -61,7 +61,7 @@ extern const NSInteger UIImageDiskCacheErrorNilURL;
 //If you change this then you are responsible for implementing delegate logic for acceptsAnySSLCertificate if needed.
 @property (nonatomic) NSURLSession * session;
 
-//default location is in home/Library/Caches/UIImageDiskCache
+//default location is in home/Library/Caches/UIImageLoader
 @property (readonly) NSURL * cacheDirectory;
 
 //whether to use server cache policy. Default is TRUE
@@ -82,8 +82,8 @@ extern const NSInteger UIImageDiskCacheErrorNilURL;
 //whether to log warnings about response headers.
 @property BOOL logResponseWarnings;
 
-//get the default configured disk cache.
-+ (UIImageDiskCache *) defaultDiskCache;
+//get the default configured loader.
++ (UIImageLoader *) defaultLoader;
 
 //set the Authorization username/password. If set this gets added to every request. Use nil/nil to clear.
 - (void) setAuthUsername:(NSString *) username password:(NSString *) password;
@@ -93,14 +93,17 @@ extern const NSInteger UIImageDiskCacheErrorNilURL;
 - (void) clearCachedFilesOlderThan1Week;
 - (void) clearCachedFilesOlderThan:(NSTimeInterval) timeInterval;
 
+//load an image with URL.
 - (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
-								   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-								sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-						   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
+								   hasCache:(UIImageLoader_HasCacheBlock) hasCache
+								sendRequest:(UIImageLoader_SendingRequestBlock) sendRequest
+						   requestCompleted:(UIImageLoader_RequestCompletedBlock) requestCompleted;
 
+//load an image with custom request.
+//auth headers will be added to your request if needed.
 - (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
-									   hasCache:(UIImageDiskCache_HasCacheBlock) hasCache
-									sendRequest:(UIImageDiskCache_SendingRequestBlock) sendRequest
-							   requestCompleted:(UIImageDiskCache_RequestCompletedBlock) requestCompleted;
+									   hasCache:(UIImageLoader_HasCacheBlock) hasCache
+									sendRequest:(UIImageLoader_SendingRequestBlock) sendRequest
+							   requestCompleted:(UIImageLoader_RequestCompletedBlock) requestCompleted;
 
 @end

@@ -12,9 +12,9 @@
 		070149671C24ED2800B9375C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 070149661C24ED2800B9375C /* ViewController.m */; };
 		0701496C1C24ED2800B9375C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0701496B1C24ED2800B9375C /* Assets.xcassets */; };
 		0701496F1C24ED2800B9375C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0701496D1C24ED2800B9375C /* LaunchScreen.storyboard */; };
-		070149781C24ED5500B9375C /* UIImageDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 070149771C24ED5500B9375C /* UIImageDiskCache.m */; };
 		0701497A1C25018C00B9375C /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 070149791C25018C00B9375C /* ViewController.xib */; };
 		0701497C1C250C6500B9375C /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 0701497B1C250C6500B9375C /* settings.png */; };
+		074D8D3E1C28952F007B5516 /* UIImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D3D1C28952F007B5516 /* UIImageLoader.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,10 +27,10 @@
 		0701496B1C24ED2800B9375C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0701496E1C24ED2800B9375C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		070149701C24ED2800B9375C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		070149761C24ED5500B9375C /* UIImageDiskCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIImageDiskCache.h; path = ../../UIImageDiskCache.h; sourceTree = "<group>"; };
-		070149771C24ED5500B9375C /* UIImageDiskCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIImageDiskCache.m; path = ../../UIImageDiskCache.m; sourceTree = "<group>"; };
 		070149791C25018C00B9375C /* ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
 		0701497B1C250C6500B9375C /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = SOURCE_ROOT; };
+		074D8D3C1C28952F007B5516 /* UIImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIImageLoader.h; path = ../../UIImageLoader.h; sourceTree = "<group>"; };
+		074D8D3D1C28952F007B5516 /* UIImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIImageLoader.m; path = ../../UIImageLoader.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +63,8 @@
 		0701495E1C24ED2800B9375C /* UIImageDiskCacheSample */ = {
 			isa = PBXGroup;
 			children = (
+				074D8D3C1C28952F007B5516 /* UIImageLoader.h */,
+				074D8D3D1C28952F007B5516 /* UIImageLoader.m */,
 				0701497B1C250C6500B9375C /* settings.png */,
 				070149621C24ED2800B9375C /* AppDelegate.h */,
 				070149631C24ED2800B9375C /* AppDelegate.m */,
@@ -70,8 +72,6 @@
 				070149701C24ED2800B9375C /* Info.plist */,
 				0701496D1C24ED2800B9375C /* LaunchScreen.storyboard */,
 				0701495F1C24ED2800B9375C /* Supporting Files */,
-				070149761C24ED5500B9375C /* UIImageDiskCache.h */,
-				070149771C24ED5500B9375C /* UIImageDiskCache.m */,
 				070149651C24ED2800B9375C /* ViewController.h */,
 				070149661C24ED2800B9375C /* ViewController.m */,
 				070149791C25018C00B9375C /* ViewController.xib */,
@@ -158,9 +158,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				070149781C24ED5500B9375C /* UIImageDiskCache.m in Sources */,
 				070149671C24ED2800B9375C /* ViewController.m in Sources */,
 				070149641C24ED2800B9375C /* AppDelegate.m in Sources */,
+				074D8D3E1C28952F007B5516 /* UIImageLoader.m in Sources */,
 				070149611C24ED2800B9375C /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

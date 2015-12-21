@@ -1,7 +1,6 @@
 
 #import "AppDelegate.h"
 #import "ViewController.h"
-#import "UIImageDiskCache.h"
 
 @interface AppDelegate ()
 @end

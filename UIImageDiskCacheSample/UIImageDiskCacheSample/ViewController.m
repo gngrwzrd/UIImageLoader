@@ -1,6 +1,6 @@
 
 #import "ViewController.h"
-#import "UIImageDiskCache.h"
+#import "UIImageLoader.h"
 
 @interface ViewController ()
 @end
@@ -10,9 +10,9 @@
 - (void) viewDidLoad {
 	[super viewDidLoad];
 	
-	UIImageDiskCache * cache = [UIImageDiskCache defaultDiskCache];
+	UIImageLoader * cache = [UIImageLoader defaultLoader];
 	NSLog(@"cache path: %@",cache.cacheDirectory);
-	[UIImageDiskCache defaultDiskCache].etagOnlyCacheControl = 604800;
+	cache.etagOnlyCacheControl = 604800;
 	//[UIImageDiskCache defaultDiskCache].useServerCachePolicy = FALSE;
 	//[UIImageDiskCache defaultDiskCache].logCacheMisses = FALSE;
 	
