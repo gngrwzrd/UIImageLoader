@@ -1,12 +1,14 @@
 # UIImageLoader
 
-UIImageLoader is a helper to load images from the web, but also cache them on disk and optionally in memory. It makes it super simple to write handler code for cached versions, set a placeholder when a network request is being made, and handle any errors on request completion.
+UIImageLoader is a helper to load images from the web. It caches images on disk, and optionally in memory.
+
+It makes it super simple to write handler code for cached images, set a placeholder image when a network request is being made, and handle any errors on request completion.
 
 It supports server cache control to re-download images when expired. Cache control logic is implemented manually instead of using an NSURLCache for performance reasons.
 
 You can also completely ignore server cache control and manually clean-up images yourself.
 
-It's very small at roughly 500+ lines of code in a single header / implementation file.
+It's very small at roughly 600+ lines of code in a single header / implementation file.
 
 Everything is asynchronous and uses modern objective-c with libdispatch and NSURLSession.
 
@@ -14,13 +16,11 @@ Everything is asynchronous and uses modern objective-c with libdispatch and NSUR
 
 This isn't intended to compete with other frameworks that are optimized to provide fast scrolling for thousands or tens-of-thousands of images.
 
-For average apps that would like to cache images on disk and have some options to control caching, this will make a noticeable difference.
+For average apps that would like to cache images on disk and have some options for control caching, this will make a noticeable difference.
 
 My particular use case was a better disk cache that isn't NSURLCache. It provides better options for handling how server cache control is used. And get rid of delays or flickering that happens because of NSURLCache being slow.
 
-## No Flickering or Noticeable Delayed Loads For Cached Images
-
-Images that are cached and available on disk load into UIImageView or UIButton almost immediatly. This is most noticeable on table view cells.
+Images that are cached and available on disk load almost immediatly. This is most noticeable on table view cells.
 
 You can also cache images in memory for even faster loading.
 
@@ -64,11 +64,11 @@ UIImageLoader * loader = [[UIImageLoader alloc] init];
 It's easy to load an image:
 
 ````
-UIImageLoader * cache = [UIImageLoader defaultLoader];
+UIImageLoader * loader = [UIImageLoader defaultLoader];
 
 NSURL * imageURL = myURL;	
 
-[cache loadImageWithURL:imageURL \
+[loader loadImageWithURL:imageURL \
 
 hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
 	
@@ -148,6 +148,31 @@ If load source is _UIImageLoadSourceNetworkToDisk_, it means a new image was dow
 
 If load source is _UIImageLoadSourceNetworkNotModified_, it means the cached image is still valid. You won't receive an image in this case as the image was already passed to your _hasCache_ callback.
 
+### Memory Cache
+
+You can enable the memory cache easily:
+
+````
+UIImageLoader * loader = [UIImageLoader defaultLoader];
+loader.cacheImagesInMemory = TRUE;
+````
+
+You can change the memory limit with:
+
+````
+UIImageLoader * loader = [UIImageLoader defaultLoader];
+loader.memoryCache.maxBytes = 50 * (1024 * 1024); //50MB;
+````
+
+You can purge memory with:
+
+````
+UIImageLoader * loader = [UIImageLoader defaultLoader];
+[loader.memoryCache purge];
+````
+
+_Memory cache is not shared among loaders, each loader will have it's own cache._
+
 ### Manual Cache Cleanup
 
 If you aren't using server cache control, you can use a few helper methods to cleanup images on disk:
@@ -168,8 +193,8 @@ It's easy to put some cleanup in app delegate:
 
 ````
 - (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    UIImageLoader * cache = [UIImageLoader defaultLoader];
-    [cache clearCachedFilesOlderThan1Week];
+    UIImageLoader * loader = [UIImageLoader defaultLoader];
+    [loader clearCachedFilesOlderThan1Week];
 }
 ````
 
