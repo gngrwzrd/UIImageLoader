@@ -83,11 +83,16 @@ hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
 		
 		//there was not a cached image available, set a placeholder or do nothing.
 	    self.imageView.image = [UIImage imageNamed:@"placeholder"];
+	    self.loader.hidden = FALSE;
+	    [self.loader startAnimating];
 	}
 	
 } requestCompleted:^(NSError *error, UIImage *image, UIImageLoadSource loadedFromSource) {
 	
 	//network request finished.
+	
+	[self.loader stopAnimating];
+	self.loader.hidden = TRUE;
 	
 	if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
 		//the image was downloaded and saved to disk.
