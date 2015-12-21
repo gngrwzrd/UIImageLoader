@@ -84,42 +84,55 @@ Put some cleanup in app delegate:
 }
 ````
 
-### UIImage & UIImageView & UIButton
+### Loading an Image
 
-If you want to use the default cache, use one of these methods:
-
-````
-UIImage:
-- (NSURLSessionDataTask *) downloadImageWithURL:(NSURL *) url completion:(UIImageDiskCacheCompletion) completion;
-- (NSURLSessionDataTask *) downloadImageWithRequest:(NSURLRequest *) request completion:(UIImageDiskCacheCompletion) completion;
-
-UIImageView:
-- (NSURLSessionDataTask *) setImageWithURL:(NSURL *) url completion:(UIImageDiskCacheCompletion) completion;
-- (NSURLSessionDataTask *) setImageWithRequest:(NSURLRequest *) request completion:(UIImageDiskCacheCompletion) completion;
-
-UIButton:
-- (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withURL:(NSURL *) url completion:(UIImageDiskCacheCompletion) completion;
-- (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request completion:(UIImageDiskCacheCompletion) completion;
-- (NSURLSessionDataTask *) setBackgroundImageForControlState:(UIControlState) controlState withURL:(NSURL *) url completion:(UIImageDiskCacheCompletion) completion;
-- (NSURLSessionDataTask *) setBackgroundImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request completion:(UIImageDiskCacheCompletion) completion;
-````
-
-If you use a custom configured cache use these methods:
+It's easy to load an image:
 
 ````
-UIImage:
-- (NSURLSessionDataTask *) downloadImageWithURL:(NSURL *) url customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
-- (NSURLSessionDataTask *) downloadImageWithRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion)completion;
+NSURL * imageURL;
+__weak ViewController * weakself = self;
 
-UIImageView:
-- (NSURLSessionDataTask *) setImageWithURL:(NSURL *) url customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
-- (NSURLSessionDataTask *) setImageWithRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache - completion:(UIImageDiskCacheCompletion) completion;
+[self.imageView loadImageWithURL:imageURL hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
+	
+	//there was a cached image available, use it.
+	weakself.imageView.image = image;
 
-UIButton:
-- (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withURL:(NSURL *) url customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
-- (NSURLSessionDataTask *) setImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
-- (NSURLSessionDataTask *) setBackgroundImageForControlState:(UIControlState) controlState withURL:(NSURL *) url customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
-- (NSURLSessionDataTask *) setBackgroundImageForControlState:(UIControlState) controlState withRequest:(NSURLRequest *) request customCache:(UIImageDiskCache *) customCache completion:(UIImageDiskCacheCompletion) completion;
+} sendRequest:^(BOOL didHaveCachedImage) {
+	
+	//a network request is being sent to get the image.
+	//if there wasn't a cache image available, set a placeholder or ignore.
+	if(!didHaveCachedImage) {
+	    weakself.imageView.image = [UIImage imageNamed:@"placeholder.png"];
+	}
+	
+} requestCompleted:^(NSError *error, UIImage *image, UIImageLoadSource loadedFromSource) {
+	
+	//the network request finished, the image was downloaded and saved to disk.
+	if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
+		weakself.imageView.image = image;
+	}
+	
+}];
+````
+
+UIImageView, UIButton, and UIImage have similar additions to load an image.
+
+### UIImageLoadSource
+
+UIImageLoadSource gives you some information about where the image was loaded from:
+
+````
+//image source passed in completion callbacks.
+typedef NS_ENUM(NSInteger,UIImageLoadSource) {
+	//these will be passed to your hasCache callback
+	UIImageLoadSourceDisk,               //image was cached on disk already and loaded from disk
+	UIImageLoadSourceMemory,             //image was in memory cache
+	
+    //these will be passed to your requestCompleted callback
+	UIImageLoadSourceNone,               //no source as there was an error
+	UIImageLoadSourceNetworkNotModified, //a network request was sent but existing content is still valid
+	UIImageLoadSourceNetworkToDisk,      //a network request was sent, image was updated on disk
+};
 ````
 
 ### NSURLSession
@@ -135,41 +148,6 @@ If you do change the session, you are responsible for implementing it's delegate
 ### NSURLSessionDataTask
 
 Each helper method on UIImage, UIImageView, and UIButton returns an NSURLSessionDataTask. You can either use it or ignore it. It's useful if you ever needed to cancel an image request.
-
-### UIImageDiskCacheCompletion
-
-The completion callback is defined like this:
-
-````
-typedef void(^UIImageDiskCacheCompletion)
-  (NSError * error, UIImage * image, NSURL * url, UIImageLoadSource loadedFromSource);
-````
-
-You always get a reference to the image, the request url, and where the image was loaded from.
-
-For UIImageView and UIButton, the image is already set for you, you can safely ignore the image parameter. It's provided for you in case you need to do something else with it.
-
-### UIImageLoadSource
-
-UIImageLoadSource has these options available:
-
-````
-UIImageLoadSourceNone,          //no source as there was an error
-UIImageLoadSourceNetworkToDisk, //a network request was sent before returning the image from disk
-UIImageLoadSourceDisk,          //image was cached on disk already and loaded from disk
-````
-
-### Placeholder Images
-
-Some other frameworks have the idea of placeholder images. UIImageDiskCache doesn't have these because you can set the image yourself before loading an image with UIImageDiskCache.
-
-````
-myImageView.image = [UIImage imageNamed:@"myPlaceholder"];
-[myImageView setImageWithURL:myURL
-    completion:^(NSError *error, UIImage *image, NSURL * url, UIImageLoadSource loadSource) {
-
-}];
-````
 
 ## Other Useful Features
 
