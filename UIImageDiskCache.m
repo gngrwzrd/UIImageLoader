@@ -339,7 +339,9 @@ static UIImageDiskCache * _default;
 		}
 	}
 	
-	sendRequest(self,didSendCacheCompletion);
+	dispatch_async(dispatch_get_main_queue(), ^{
+		sendRequest(didSendCacheCompletion);
+	});
 	
 	__weak UIImageDiskCache * weakself = self;
 	
@@ -447,11 +449,8 @@ static UIImageDiskCache * _default;
 	NSMutableURLRequest * mutableRequest = [request mutableCopy];
 	[self setAuthorization:mutableRequest];
 	
-	BOOL didHaveCachedVersion = FALSE;
-	
 	NSURL * cachedURL = [self localFileURLForURL:mutableRequest.URL];
 	if([[NSFileManager defaultManager] fileExistsAtPath:cachedURL.path]) {
-		didHaveCachedVersion = TRUE;
 		dispatch_async(dispatch_get_main_queue(), ^{
 			hasCache(self,cachedURL,mutableRequest.URL);
 		});
@@ -462,7 +461,9 @@ static UIImageDiskCache * _default;
 		NSLog(@"[UIImageDiskCache] cache miss for url: %@",mutableRequest.URL);
 	}
 	
-	sendRequest(self,didHaveCachedVersion);
+	dispatch_async(dispatch_get_main_queue(), ^{
+		sendRequest(FALSE);
+	});
 	
 	__weak UIImageDiskCache * weakSelf = self;
 	
@@ -548,24 +549,24 @@ static UIImageDiskCache * _default;
 	//check memory cache
 	UIImage * image = [cache.memoryCache.cache objectForKey:request.URL.path];
 	if(image) {
-		hasCache(cache,image,request.URL,UIImageLoadSourceMemory);
+		hasCache(image,UIImageLoadSourceMemory);
 		return nil;
 	}
 	
 	return [cache cacheImageWithRequest:request hasCache:^(UIImageDiskCache *cache, NSURL *diskURL, NSURL *imageURL) {
 		
 		[cache loadImageInBackground:diskURL imageURL:imageURL completion:^(UIImage *image) {
-			hasCache(cache,image,imageURL,UIImageLoadSourceDisk);
+			hasCache(image,UIImageLoadSourceDisk);
 		}];
 		
 	} sendRequest:sendRequest requestComplete:^(NSError *error, UIImageDiskCache *cache, NSURL *diskURL, NSURL *imageURL, UIImageLoadSource loadedFromSource) {
 		
 		if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
 			[cache loadImageInBackground:diskURL imageURL:imageURL completion:^(UIImage *image) {
-				requestCompleted(error,cache,image,imageURL,loadedFromSource);
+				requestCompleted(error,image,loadedFromSource);
 			}];
 		} else {
-			requestCompleted(error,cache,nil,imageURL,loadedFromSource);
+			requestCompleted(error,nil,loadedFromSource);
 		}
 		
 	}];

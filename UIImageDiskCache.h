@@ -37,9 +37,9 @@ typedef NS_ENUM(NSInteger,UIImageLoadSource) {
 @class UIImageDiskCache;
 
 //completion block
-typedef void(^UIImageDiskCache_HasCacheBlock)(UIImageDiskCache * cache, UIImage * image, NSURL * imageURL, UIImageLoadSource loadedFromSource);
-typedef void(^UIImageDiskCache_SendingRequestBlock)(UIImageDiskCache * cache, BOOL didHaveCachedImage);
-typedef void(^UIImageDiskCache_RequestCompletedBlock)(NSError * error, UIImageDiskCache * cache, UIImage * image, NSURL * imageURL, UIImageLoadSource loadedFromSource);
+typedef void(^UIImageDiskCache_HasCacheBlock)(UIImage * image, UIImageLoadSource loadedFromSource);
+typedef void(^UIImageDiskCache_SendingRequestBlock)(BOOL didHaveCachedImage);
+typedef void(^UIImageDiskCache_RequestCompletedBlock)(NSError * error, UIImage * image, UIImageLoadSource loadedFromSource);
 
 //error constants
 extern NSString * const UIImageDiskCacheErrorDomain;
