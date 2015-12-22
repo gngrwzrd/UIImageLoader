@@ -55,7 +55,13 @@ loader.memoryCache.maxBytes = 25 * (1024 * 1024); //25MB;
 Or you can setup your own and configure it:
 
 ````
-UIImageLoader * loader = [[UIImageLoader alloc] init];
+//create a directory for the disk cache
+NSURL * appSupport = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
+NSURL * defaultCacheDir = [appSupport URLByAppendingPathComponent:@"UIImageLoader"];
+[[NSFileManager defaultManager] createDirectoryAtURL:defaultCacheDir withIntermediateDirectories:TRUE attributes:nil error:nil];
+
+//create loader
+UIImageLoader * loader = [[UIImageLoader alloc] initWithCacheDirectory:defaultCacheDir];
 //set loader properties here.
 ````
 
@@ -64,11 +70,9 @@ UIImageLoader * loader = [[UIImageLoader alloc] init];
 It's easy to load an image:
 
 ````
-UIImageLoader * loader = [UIImageLoader defaultLoader];
-
 NSURL * imageURL = myURL;	
 
-[loader loadImageWithURL:imageURL \
+[[UIImageLoader defaultLoader] loadImageWithURL:imageURL \
 
 hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
 	
@@ -81,10 +85,9 @@ hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
 	
 	if(!didHaveCachedImage) {
 		
+		//there was not a cached image available, set a placeholder or do nothing.
 		self.loader.hidden = FALSE;
 	    [self.loader startAnimating];
-		
-		//there was not a cached image available, set a placeholder or do nothing.
 	    self.imageView.image = [UIImage imageNamed:@"placeholder"];
 	}
 	
@@ -153,6 +156,14 @@ If a network error occurs, you'll receive an _error_ object and _UIImageLoadSour
 If load source is _UIImageLoadSourceNetworkToDisk_, it means a new image was downloaded. This can mean either it was a new download, or existing cache was updated. You should use the new image provided.
 
 If load source is _UIImageLoadSourceNetworkNotModified_, it means the cached image is still valid. You won't receive an image in this case as the image was already passed to your _hasCache_ callback.
+
+### Accepted Image Types
+
+You can customize the accepted content-types types from servers with:
+
+````
+loader.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
+````
 
 ### Memory Cache
 

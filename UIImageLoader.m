@@ -36,7 +36,6 @@
 @end
 
 /* UIImageCacheData */
-
 @interface UIImageCacheData : NSObject <NSCoding>
 @property NSTimeInterval maxage;
 @property NSString * etag;
@@ -58,7 +57,7 @@ const NSInteger UIImageLoaderErrorNilURL = 3;
 //default loader
 static UIImageLoader * _default;
 
-//private disk cache properties
+//private loader properties
 @interface UIImageLoader ()
 @property NSURLSession * activeSession;
 @property (readwrite) NSURL * cacheDirectory;
@@ -75,25 +74,24 @@ static UIImageLoader * _default;
 }
 
 - (id) init {
+	NSURL * appSupport = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
+	NSURL * defaultCacheDir = [appSupport URLByAppendingPathComponent:@"UIImageLoader"];
+	[[NSFileManager defaultManager] createDirectoryAtURL:defaultCacheDir withIntermediateDirectories:TRUE attributes:nil error:nil];
+	self = [self initWithCacheDirectory:defaultCacheDir];
+	return self;
+}
+
+- (id) initWithCacheDirectory:(NSURL *) url; {
 	self = [super init];
-	
-	//default behaviors
 	self.cacheImagesInMemory = FALSE;
 	self.trustAnySSLCertificate = FALSE;
 	self.useServerCachePolicy = TRUE;
 	self.logCacheMisses = TRUE;
 	self.logResponseWarnings = TRUE;
 	self.etagOnlyCacheControl = 0;
-	
-	//default memory cache.
 	self.memoryCache = [[UIImageMemoryCache alloc] init];
-	
-	//setup default cache dir
-	NSURL * appSupport = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
-	NSURL * defaultCacheDir = [appSupport URLByAppendingPathComponent:@"UIImageLoader"];
-	[[NSFileManager defaultManager] createDirectoryAtURL:defaultCacheDir withIntermediateDirectories:TRUE attributes:nil error:nil];
-	self.cacheDirectory = defaultCacheDir;
-	
+	self.cacheDirectory = url;
+	self.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
 	return self;
 }
 
@@ -192,8 +190,7 @@ static UIImageLoader * _default;
 }
 
 - (BOOL) acceptedContentType:(NSString *) contentType {
-	NSArray * acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
-	return [acceptedContentTypes containsObject:contentType];
+	return [self.acceptedContentTypes containsObject:contentType];
 }
 
 - (NSDate *) createdDateForFileURL:(NSURL *) url {

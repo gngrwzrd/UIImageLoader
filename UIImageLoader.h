@@ -1,26 +1,6 @@
 
 #import <UIKit/UIKit.h>
 
-/************************/
-/** UIImageMemoryCache **/
-/************************/
-
-@interface UIImageMemoryCache : NSObject
-
-//max cache size in bytes.
-@property (nonatomic) NSUInteger maxBytes;
-
-//cache an image with URL as key.
-- (void) cacheImage:(UIImage *) image forURL:(NSURL *) url;
-
-//remove an image with url as key.
-- (void) removeImageForURL:(NSURL *) url;
-
-//delete all cache data.
-- (void) purge;
-
-@end
-
 /********************/
 /* UIImageLoader */
 /********************/
@@ -38,7 +18,7 @@ typedef NS_ENUM(NSInteger,UIImageLoadSource) {
 };
 
 //forward
-@class UIImageLoader;
+@class UIImageMemoryCache;
 
 //completion block
 typedef void(^UIImageLoader_HasCacheBlock)(UIImage * image, UIImageLoadSource loadedFromSource);
@@ -64,6 +44,9 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 //default location is in home/Library/Caches/UIImageLoader
 @property (readonly) NSURL * cacheDirectory;
 
+//accepted content types (default = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"]).
+@property NSArray * acceptedContentTypes;
+
 //whether to use server cache policy. Default is TRUE
 @property BOOL useServerCachePolicy;
 
@@ -85,6 +68,9 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 //get the default configured loader.
 + (UIImageLoader *) defaultLoader;
 
+//init with a disk cache url.
+- (id) initWithCacheDirectory:(NSURL *) url;
+
 //set the Authorization username/password. If set this gets added to every request. Use nil/nil to clear.
 - (void) setAuthUsername:(NSString *) username password:(NSString *) password;
 
@@ -105,5 +91,25 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 									   hasCache:(UIImageLoader_HasCacheBlock) hasCache
 									sendRequest:(UIImageLoader_SendingRequestBlock) sendRequest
 							   requestCompleted:(UIImageLoader_RequestCompletedBlock) requestCompleted;
+
+@end
+
+/************************/
+/** UIImageMemoryCache **/
+/************************/
+
+@interface UIImageMemoryCache : NSObject
+
+//max cache size in bytes.
+@property (nonatomic) NSUInteger maxBytes;
+
+//cache an image with URL as key.
+- (void) cacheImage:(UIImage *) image forURL:(NSURL *) url;
+
+//remove an image with url as key.
+- (void) removeImageForURL:(NSURL *) url;
+
+//delete all cache data.
+- (void) purge;
 
 @end
