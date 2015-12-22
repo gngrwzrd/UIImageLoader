@@ -41,7 +41,14 @@ Download, fork, clone or submodule this repo. Then add UIImageLoader.h/m to your
 There's a default configured loader which you're free to configure how you like.
 
 ````
-//this is default configuration:
+//this is default how everything is configued by default
+
+//default cache dir -> ~/Library/Caches/UIImageLoader
+NSURL * appSupport = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
+NSURL * defaultCacheDir = [appSupport URLByAppendingPathComponent:@"UIImageLoader"];
+[[NSFileManager defaultManager] createDirectoryAtURL:defaultCacheDir withIntermediateDirectories:TRUE attributes:nil error:nil];
+
+//default image loader
 UIImageLoader * loader = [UIImageLoader defaultLoader];
 loader.cacheImagesInMemory = FALSE;
 loader.trustAnySSLCertificate  = FALSE;
@@ -50,6 +57,7 @@ loader.logCacheMisses = TRUE;
 loader.logResponseWarnings = TRUE;
 loader.etagOnlyCacheControl = 0;
 loader.memoryCache.maxBytes = 25 * (1024 * 1024); //25MB;
+loader.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
 ````
 
 Or you can setup your own and configure it:
@@ -153,7 +161,7 @@ typedef void(^UIImageLoader_RequestCompletedBlock)(NSError * error, UIImage * im
 
 If a network error occurs, you'll receive an _error_ object and _UIImageLoadSourceNone_.
 
-If load source is _UIImageLoadSourceNetworkToDisk_, it means a new image was downloaded. This can mean either it was a new download, or existing cache was updated. You should use the new image provided.
+If load source is _UIImageLoadSourceNetworkToDisk_, it means a new image was downloaded. Either it was a new download, or existing cache was updated. You should use the new image provided.
 
 If load source is _UIImageLoadSourceNetworkNotModified_, it means the cached image is still valid. You won't receive an image in this case as the image was already passed to your _hasCache_ callback.
 
