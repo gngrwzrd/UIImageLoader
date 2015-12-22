@@ -303,7 +303,7 @@ static UIImageLoader * _default;
 			return nil;
 		} else {
 			didSendCacheCompletion = TRUE;
-			//call placeholder completion and continue load below
+			//call hasCache completion and continue load below
 			hasCache(cachedImageURL);
 		}
 	} else {
@@ -500,7 +500,9 @@ static UIImageLoader * _default;
 	return [self cacheImageWithRequest:request hasCache:^(NSURL *diskURL) {
 		
 		[self loadImageInBackground:diskURL completion:^(UIImage *image) {
-			[self.memoryCache cacheImage:image forURL:request.URL];
+			if(self.cacheImagesInMemory) {
+				[self.memoryCache cacheImage:image forURL:request.URL];
+			}
 			dispatch_async(dispatch_get_main_queue(), ^{
 				hasCache(image,UIImageLoadSourceDisk);
 			});
@@ -516,7 +518,9 @@ static UIImageLoader * _default;
 		
 		if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
 			[self loadImageInBackground:diskURL completion:^(UIImage *image) {
-				[self.memoryCache cacheImage:image forURL:request.URL];
+				if(self.cacheImagesInMemory) {
+					[self.memoryCache cacheImage:image forURL:request.URL];
+				}
 				dispatch_async(dispatch_get_main_queue(), ^{
 					requestCompleted(error,image,loadedFromSource);
 				});
