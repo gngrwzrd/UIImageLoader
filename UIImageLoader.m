@@ -350,9 +350,18 @@ static UIImageLoader * _default;
 		if(httpResponse.statusCode == 304) {
 			
 			if(headers[@"Cache-Control"]) {
+				
 				NSString * control = headers[@"Cache-Control"];
 				[self setCacheControlForCacheInfo:cached fromCacheControlString:control];
 				[self writeCacheControlData:cached toFile:cacheInfoFile];
+			
+			} else {
+				
+				if(headers[@"ETag"] && self.etagOnlyCacheControl > 0) {
+					cached.maxage = self.etagOnlyCacheControl;
+					[self writeCacheControlData:cached toFile:cacheInfoFile];
+				}
+				
 			}
 			
 			requestCompleted(nil,cachedImageURL,UIImageLoadSourceNetworkNotModified);
