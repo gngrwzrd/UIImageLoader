@@ -277,33 +277,7 @@ typedef NSImage UIImageLoaderImage;
 
 There's a very simple sample application that shows loading images into a collection view. The app loads 1000 images from dribbble.
 
-The sample app requires a submodule, if you want to test the sample app it's best to clone this repo:
-
-````
-git clone git@github.com:/gngrwzrd/UIImageLoader.git
-cd UIImageLoader
-git submodule init
-git submodule update
-````
-
 The app demonstrates how to setup a cell to load images, but gracefully show spinners, and gracefully handle when a cell is reused but a request hasn't finished loading.
-
-You will need to create a Dribbble API application in order to test it.
-
-You can create a dribbble app very easily here (you'll at least need to signup):
-
-[https://dribbble.com/account/applications/](https://dribbble.com/account/applications/)
-
-Once you've created a dribbble application, update the ViewController.m file:
-
-````
-- (void) setupDribbble {
-	self.dribbble = [[Dribbble alloc] init];
-	self.dribbble.accessToken = @"";
-	self.dribbble.clientSecret = @"";
-	self.dribbble.clientId = @"";
-}
-````
 
 Here's the collection view cell source from the sample application:
 
