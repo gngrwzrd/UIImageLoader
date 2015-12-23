@@ -7,10 +7,6 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-//#ifdef TARGET_OS_MAC
-//#import <Cocoa/Cocoa.h>
-//#endif
-
 /********************/
 /* UIImageLoader */
 /********************/
