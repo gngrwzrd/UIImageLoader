@@ -227,6 +227,8 @@ static UIImageLoader * _default;
 		NSDate * modified = [NSDate date];
 		NSDictionary * attributes = @{NSFileModificationDate:modified};
 		[[NSFileManager defaultManager] setAttributes:attributes ofItemAtPath:diskURL.path error:nil];
+		NSURL * cachedInfoFile = [diskURL URLByAppendingPathExtension:@"cc"];
+		[[NSFileManager defaultManager] setAttributes:attributes ofItemAtPath:cachedInfoFile.path error:nil];
 		UIImageLoaderImage * image = [[UIImageLoaderImage alloc] initWithContentsOfFile:diskURL.path];
 		if(completion) {
 			completion(image);
