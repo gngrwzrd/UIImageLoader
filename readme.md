@@ -8,7 +8,7 @@ It supports server cache control to re-download images when expired. Cache contr
 
 You can also completely ignore server cache control and manually clean-up images yourself.
 
-It's very small at roughly 600+ lines of code in a single header / implementation file.
+It's compatible with iOS and Mac. And very small at roughly 600+ lines of code in a single header / implementation file.
 
 Everything is asynchronous and uses modern objective-c with libdispatch and NSURLSession.
 
@@ -70,7 +70,7 @@ NSURL * imageURL = myURL;
 
 [[UIImageLoader defaultLoader] loadImageWithURL:imageURL \
 
-hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
+hasCache:^(UIImageLoaderImage * image, UIImageLoadSource loadedFromSource) {
 	
 	//there was a cached image available. use that.
 	self.imageView.image = image;
@@ -87,7 +87,7 @@ hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
 	    self.imageView.image = [UIImage imageNamed:@"placeholder"];
 	}
 	
-} requestCompleted:^(NSError *error, UIImage *image, UIImageLoadSource loadedFromSource) {
+} requestCompleted:^(NSError *error, UIImageLoaderImage * image, UIImageLoadSource loadedFromSource) {
 	
 	//network request finished.
 	
@@ -129,7 +129,7 @@ typedef NS_ENUM(NSInteger,UIImageLoadSource) {
 When you load an image with UIImageLoader, the first callback you can use is the _hasCache_ callback. It's defined as:
 
 ````
-typedef void(^UIImageLoader_HasCacheBlock)(UIImage * image, UIImageLoadSource loadedFromSource);
+typedef void(^UIImageLoader_HasCacheBlock)(UIImageLoaderImage * image, UIImageLoadSource loadedFromSource);
 ````
 
 If a cached image is available, you will get the image, and the source will be either UIImageLoadSourceDisk or UIImageLoadSourceMemory.
@@ -149,7 +149,7 @@ The _didHaveCachedImage_ parameter tells you if a cached image was available (an
 This callback runs when the request has finished. It's defined as:
 
 ````
-typedef void(^UIImageLoader_RequestCompletedBlock)(NSError * error, UIImage * image, UIImageLoadSource loadedFromSource);
+typedef void(^UIImageLoader_RequestCompletedBlock)(NSError * error, UIImageLoaderImage * image, UIImageLoadSource loadedFromSource);
 ````
 
 If a network error occurs, you'll receive an _error_ object and _UIImageLoadSourceNone_.
@@ -258,6 +258,19 @@ You can set default user/pass that gets sent in every request with:
 
 ````
 [myLoader setAuthUsername:@"username" password:@"password"];
+````
+
+## UIImageLoaderImage For Platform Compatibility
+
+For compatibility between platforms, there's a typedef that UIImageLoader uses to switch out image types.
+
+````
+// UIImageLoaderImage - typedef for ios/mac compatibility
+#if TARGET_OS_IPHONE
+typedef UIImage UIImageLoaderImage;
+#elif TARGET_OS_MAC
+typedef NSImage UIImageLoaderImage;
+#endif
 ````
 
 # Dribbble Sample

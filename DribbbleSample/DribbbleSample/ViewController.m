@@ -35,9 +35,9 @@
 - (void) setupDribbble {
 	//see README.md in the DribbbleSample folder.
 	self.dribbble = [[Dribbble alloc] init];
-	self.dribbble.accessToken = @"";
-	self.dribbble.clientSecret = @"";
-	self.dribbble.clientId = @"";
+	self.dribbble.accessToken = @"810c4b42e1b024288936ca1150ce3608faf22ce81fb046b12798f0b84767f22b";
+	self.dribbble.clientSecret = @"7957361fe9c0f0e399712922e688101966e1eb243025f7d1dcb594a00f926104";
+	self.dribbble.clientId = @"e5a423e0ea9b42d05d721ea29078f19b78804c11d9ed63b51db2c4081fe25228";
 }
 
 - (void) loadDribbbleShots {
