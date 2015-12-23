@@ -466,7 +466,11 @@ static UIImageLoader * _default;
 	
 	NSURLSessionDataTask * task = [[self session] dataTaskWithRequest:mutableRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
 		if(error) {
-			requestComplete(error,nil,UIImageLoadSourceNone);
+			if(error.code == -999 && [error.domain isEqualToString:@"NSURLErrorDomain"]) {
+				requestComplete(error,nil,UIImageLoadSourceNetworkCancelled);
+			} else {
+				requestComplete(error,nil,UIImageLoadSourceNone);
+			}
 			return;
 		}
 		
