@@ -132,7 +132,7 @@ typedef NS_ENUM(NSInteger,UIImageLoadSource) {
     //these will be passed to your requestCompleted callback
 	UIImageLoadSourceNetworkNotModified, //a network request was sent but existing content is still valid
 	UIImageLoadSourceNetworkToDisk,      //a network request was sent, image was updated on disk
-	UIImageLoadSourceNetworkCancelled,   //a network request was sent, but the NSURLSessionDataTask was cancelled.
+	UIImageLoadSourceNetworkCancelled,   //a network request was sent, but the NSURLSessionDataTask was cancelled
 };
 ````
 
