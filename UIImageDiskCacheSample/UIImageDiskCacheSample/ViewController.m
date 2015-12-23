@@ -18,11 +18,11 @@
 	
 	NSURL * imageURL = [NSURL URLWithString:@"http://cp91279.biography.com/1000509261001/1000509261001_1822941199001_BIO-Biography-31-Innovators-Steve-Jobs-115958-SF.jpg"];
 	
-	[cache loadImageWithURL:imageURL hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
+	[cache loadImageWithURL:imageURL hasCache:^(UIImageLoaderImage * image, UIImageLoadSource loadedFromSource) {
 		self.imageView.image = image;
 	} sendRequest:^(BOOL didHaveCachedImage) {
 		
-	} requestCompleted:^(NSError *error, UIImage *image, UIImageLoadSource loadedFromSource) {
+	} requestCompleted:^(NSError *error, UIImageLoaderImage * image, UIImageLoadSource loadedFromSource) {
 		if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
 			self.imageView.image = image;
 		}
@@ -30,7 +30,7 @@
 	
 	imageURL = [NSURL URLWithString:@"http://i1-news.softpedia-static.com/images/news2/How-To-Change-the-Language-on-Your-iPhone-iPod-touch-2.png"];
 	
-	[cache loadImageWithURL:imageURL hasCache:^(UIImage *image, UIImageLoadSource loadedFromSource) {
+	[cache loadImageWithURL:imageURL hasCache:^(UIImageLoaderImage * image, UIImageLoadSource loadedFromSource) {
 		[self.button setImage:image forState:UIControlStateNormal];
 	} sendRequest:^(BOOL didHaveCachedImage) {
 		

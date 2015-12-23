@@ -1,29 +1,48 @@
 
+#import <TargetConditionals.h>
+
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
+#elif TARGET_OS_MAC
+#import <Cocoa/Cocoa.h>
+#endif
+
+//#ifdef TARGET_OS_MAC
+//#import <Cocoa/Cocoa.h>
+//#endif
 
 /********************/
 /* UIImageLoader */
 /********************/
 
+// UIImageLoaderImage - typedef for ios/mac compatibility
+#if TARGET_OS_IPHONE
+typedef UIImage UIImageLoaderImage;
+#elif TARGET_OS_MAC
+typedef NSImage UIImageLoaderImage;
+#endif
+
 //image source passed in completion callbacks.
 typedef NS_ENUM(NSInteger,UIImageLoadSource) {
+	UIImageLoadSourceNone,               //no image source as there was an error.
+	
 	//these will be passed to your hasCache callback
 	UIImageLoadSourceDisk,               //image was cached on disk already and loaded from disk
 	UIImageLoadSourceMemory,             //image was in memory cache
 	
     //these will be passed to your requestCompleted callback
-	UIImageLoadSourceNone,               //no source as there was an error
 	UIImageLoadSourceNetworkNotModified, //a network request was sent but existing content is still valid
 	UIImageLoadSourceNetworkToDisk,      //a network request was sent, image was updated on disk
+	UIImageLoadSourceNetworkCancelled,   //a network request was sent, but the NSURLSessionDataTask was cancelled.
 };
 
 //forward
 @class UIImageMemoryCache;
 
 //completion block
-typedef void(^UIImageLoader_HasCacheBlock)(UIImage * image, UIImageLoadSource loadedFromSource);
+typedef void(^UIImageLoader_HasCacheBlock)(UIImageLoaderImage * image, UIImageLoadSource loadedFromSource);
 typedef void(^UIImageLoader_SendingRequestBlock)(BOOL didHaveCachedImage);
-typedef void(^UIImageLoader_RequestCompletedBlock)(NSError * error, UIImage * image, UIImageLoadSource loadedFromSource);
+typedef void(^UIImageLoader_RequestCompletedBlock)(NSError * error, UIImageLoaderImage * image, UIImageLoadSource loadedFromSource);
 
 //error constants
 extern NSString * const UIImageLoaderErrorDomain;
@@ -104,7 +123,7 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 @property (nonatomic) NSUInteger maxBytes;
 
 //cache an image with URL as key.
-- (void) cacheImage:(UIImage *) image forURL:(NSURL *) url;
+- (void) cacheImage:(UIImageLoaderImage *) image forURL:(NSURL *) url;
 
 //remove an image with url as key.
 - (void) removeImageForURL:(NSURL *) url;

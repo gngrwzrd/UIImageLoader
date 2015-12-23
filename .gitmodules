@@ -1,0 +1,3 @@
+[submodule "DribbbleSample/submodules/dribbble-api-modern-objc"]
+	path = DribbbleSample/submodules/dribbble-api-modern-objc
+	url = git@github.com:gngrwzrd/dribbble-api-modern-objc.git

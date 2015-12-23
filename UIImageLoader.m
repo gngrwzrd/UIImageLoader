@@ -18,7 +18,7 @@
 	return self;
 }
 
-- (void) cacheImage:(UIImage *) image forURL:(NSURL *) url; {
+- (void) cacheImage:(UIImageLoaderImage *) image forURL:(NSURL *) url; {
 	if(image) {
 		NSUInteger cost = CGImageGetHeight(image.CGImage) * CGImageGetBytesPerRow(image.CGImage);
 		[self.cache setObject:image forKey:url.path cost:cost];
@@ -43,7 +43,7 @@
 @end
 
 /* UIImageLoader */
-typedef void(^UIImageLoadedBlock)(UIImage * image);
+typedef void(^UIImageLoadedBlock)(UIImageLoaderImage * image);
 typedef void(^NSURLAndDataWriteBlock)(NSURL * url, NSData * data);
 typedef void(^UIImageLoaderURLCompletion)(NSError * error, NSURL * diskURL, UIImageLoadSource loadedFromSource);
 typedef void(^UIImageLoaderDiskURLCompletion)(NSURL * diskURL);
@@ -227,7 +227,7 @@ static UIImageLoader * _default;
 		NSDate * modified = [NSDate date];
 		NSDictionary * attributes = @{NSFileModificationDate:modified};
 		[[NSFileManager defaultManager] setAttributes:attributes ofItemAtPath:diskURL.path error:nil];
-		UIImage * image = [UIImage imageWithContentsOfFile:diskURL.path];
+		UIImageLoaderImage * image = [UIImage imageWithContentsOfFile:diskURL.path];
 		if(completion) {
 			completion(image);
 		}
@@ -336,7 +336,11 @@ static UIImageLoader * _default;
 	
 	NSURLSessionDataTask * task = [[self session] dataTaskWithRequest:mutableRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
 		if(error) {
-			requestCompleted(error,nil,UIImageLoadSourceNone);
+			if(error.code == -999 && [error.domain isEqualToString:@"NSURLErrorDomain"]) {
+				requestCompleted(error,nil,UIImageLoadSourceNetworkCancelled);
+			} else {
+				requestCompleted(error,nil,UIImageLoadSourceNone);
+			}
 			return;
 		}
 		
@@ -495,7 +499,7 @@ static UIImageLoader * _default;
 							   requestCompleted:(UIImageLoader_RequestCompletedBlock) requestCompleted; {
 	
 	//check memory cache
-	UIImage * image = [self.memoryCache.cache objectForKey:request.URL.path];
+	UIImageLoaderImage * image = [self.memoryCache.cache objectForKey:request.URL.path];
 	if(image) {
 		dispatch_async(dispatch_get_main_queue(), ^{
 			hasCache(image,UIImageLoadSourceMemory);
@@ -505,7 +509,7 @@ static UIImageLoader * _default;
 	
 	return [self cacheImageWithRequest:request hasCache:^(NSURL *diskURL) {
 		
-		[self loadImageInBackground:diskURL completion:^(UIImage *image) {
+		[self loadImageInBackground:diskURL completion:^(UIImageLoaderImage *image) {
 			if(self.cacheImagesInMemory) {
 				[self.memoryCache cacheImage:image forURL:request.URL];
 			}
@@ -523,7 +527,7 @@ static UIImageLoader * _default;
 	} requestComplete:^(NSError *error, NSURL *diskURL, UIImageLoadSource loadedFromSource) {
 		
 		if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
-			[self loadImageInBackground:diskURL completion:^(UIImage *image) {
+			[self loadImageInBackground:diskURL completion:^(UIImageLoaderImage *image) {
 				if(self.cacheImagesInMemory) {
 					[self.memoryCache cacheImage:image forURL:request.URL];
 				}

@@ -123,11 +123,16 @@ The enum UIImageLoadSource provides you with where the image was loaded from:
 ````
 //image source passed in completion callbacks.
 typedef NS_ENUM(NSInteger,UIImageLoadSource) {
+	UIImageLoadSourceNone,               //no image source as there was an error.
+	
+	//these will be passed to your hasCache callback
 	UIImageLoadSourceDisk,               //image was cached on disk already and loaded from disk
 	UIImageLoadSourceMemory,             //image was in memory cache
-	UIImageLoadSourceNone,               //no source as there was an error
+	
+    //these will be passed to your requestCompleted callback
 	UIImageLoadSourceNetworkNotModified, //a network request was sent but existing content is still valid
 	UIImageLoadSourceNetworkToDisk,      //a network request was sent, image was updated on disk
+	UIImageLoadSourceNetworkCancelled,   //a network request was sent, but the NSURLSessionDataTask was cancelled.
 };
 ````
 

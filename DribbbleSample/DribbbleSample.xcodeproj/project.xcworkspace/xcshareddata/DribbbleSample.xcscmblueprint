@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "E96D20872081850EDF8A89C603FDF058F8D695D6",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "E96D20872081850EDF8A89C603FDF058F8D695D6" : 0,
+    "048BDABE3AE79FA3EE55C616D3C9FA56FDEE4397" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "F89FA8DC-5B77-4FB8-BA5D-B7D725A662BB",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "E96D20872081850EDF8A89C603FDF058F8D695D6" : "UIImageLoader\/",
+    "048BDABE3AE79FA3EE55C616D3C9FA56FDEE4397" : "UIImageLoader\/DribbbleSample\/submodules\/dribbble-api-modern-objc\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "DribbbleSample",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "DribbbleSample\/DribbbleSample.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:gngrwzrd\/dribbble-api-modern-objc.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "048BDABE3AE79FA3EE55C616D3C9FA56FDEE4397"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:gngrwzrd\/UIImageLoader.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "E96D20872081850EDF8A89C603FDF058F8D695D6"
+    }
+  ]
+}
