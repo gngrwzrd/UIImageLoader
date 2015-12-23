@@ -285,7 +285,6 @@ Once you've created a dribbble application, update the ViewController.m file:
 
 ````
 - (void) setupDribbble {
-	//see README.md in the DribbbleSample folder.
 	self.dribbble = [[Dribbble alloc] init];
 	self.dribbble.accessToken = @"";
 	self.dribbble.clientSecret = @"";
