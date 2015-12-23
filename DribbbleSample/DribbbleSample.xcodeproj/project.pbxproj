@@ -12,14 +12,14 @@
 		074D8D751C2A313E007B5516 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D741C2A313E007B5516 /* ViewController.m */; };
 		074D8D7A1C2A313E007B5516 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 074D8D791C2A313E007B5516 /* Assets.xcassets */; };
 		074D8D7D1C2A313E007B5516 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 074D8D7B1C2A313E007B5516 /* LaunchScreen.storyboard */; };
-		074D8D891C2A319A007B5516 /* Dribbble.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D861C2A319A007B5516 /* Dribbble.m */; };
-		074D8D8A1C2A319A007B5516 /* URLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D881C2A319A007B5516 /* URLParser.m */; };
 		074D8D8C1C2A3205007B5516 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 074D8D8B1C2A3205007B5516 /* ViewController.xib */; };
 		074D8D8F1C2A3281007B5516 /* UIImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D8E1C2A3281007B5516 /* UIImageLoader.m */; };
 		074D8D921C2A346D007B5516 /* DribbbleShotCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 074D8D911C2A346D007B5516 /* DribbbleShotCell.xib */; };
 		074D8D951C2A3484007B5516 /* DribbbleShotCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D941C2A3484007B5516 /* DribbbleShotCell.m */; };
 		074D8D981C2A3B69007B5516 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D971C2A3B69007B5516 /* MBProgressHUD.m */; };
 		074D8D9B1C2A3EBE007B5516 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D9A1C2A3EBE007B5516 /* README.md */; };
+		074D8DA11C2B1FDD007B5516 /* Dribbble.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D9E1C2B1FDD007B5516 /* Dribbble.m */; };
+		074D8DA21C2B1FDD007B5516 /* URLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8DA01C2B1FDD007B5516 /* URLParser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,10 +32,6 @@
 		074D8D791C2A313E007B5516 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		074D8D7C1C2A313E007B5516 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		074D8D7E1C2A313E007B5516 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		074D8D851C2A319A007B5516 /* Dribbble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dribbble.h; path = "submodules/dribbble-api-modern-objc/dribbble-api-modern-objc/Dribbble.h"; sourceTree = SOURCE_ROOT; };
-		074D8D861C2A319A007B5516 /* Dribbble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Dribbble.m; path = "submodules/dribbble-api-modern-objc/dribbble-api-modern-objc/Dribbble.m"; sourceTree = SOURCE_ROOT; };
-		074D8D871C2A319A007B5516 /* URLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLParser.h; path = "submodules/dribbble-api-modern-objc/dribbble-api-modern-objc/URLParser.h"; sourceTree = SOURCE_ROOT; };
-		074D8D881C2A319A007B5516 /* URLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = URLParser.m; path = "submodules/dribbble-api-modern-objc/dribbble-api-modern-objc/URLParser.m"; sourceTree = SOURCE_ROOT; };
 		074D8D8B1C2A3205007B5516 /* ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
 		074D8D8D1C2A3281007B5516 /* UIImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIImageLoader.h; path = ../../UIImageLoader.h; sourceTree = "<group>"; };
 		074D8D8E1C2A3281007B5516 /* UIImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIImageLoader.m; path = ../../UIImageLoader.m; sourceTree = "<group>"; };
@@ -45,6 +41,10 @@
 		074D8D961C2A3B69007B5516 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MBProgressHUD.h; path = "MBProgressHUD-master-1/MBProgressHUD.h"; sourceTree = SOURCE_ROOT; };
 		074D8D971C2A3B69007B5516 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MBProgressHUD.m; path = "MBProgressHUD-master-1/MBProgressHUD.m"; sourceTree = SOURCE_ROOT; };
 		074D8D9A1C2A3EBE007B5516 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = DribbbleSample/README.md; sourceTree = "<group>"; };
+		074D8D9D1C2B1FDD007B5516 /* Dribbble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dribbble.h; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/Dribbble.h"; sourceTree = SOURCE_ROOT; };
+		074D8D9E1C2B1FDD007B5516 /* Dribbble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Dribbble.m; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/Dribbble.m"; sourceTree = SOURCE_ROOT; };
+		074D8D9F1C2B1FDD007B5516 /* URLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLParser.h; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/URLParser.h"; sourceTree = SOURCE_ROOT; };
+		074D8DA01C2B1FDD007B5516 /* URLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = URLParser.m; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/URLParser.m"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,10 +108,10 @@
 		074D8D841C2A3194007B5516 /* Dribbble */ = {
 			isa = PBXGroup;
 			children = (
-				074D8D851C2A319A007B5516 /* Dribbble.h */,
-				074D8D861C2A319A007B5516 /* Dribbble.m */,
-				074D8D871C2A319A007B5516 /* URLParser.h */,
-				074D8D881C2A319A007B5516 /* URLParser.m */,
+				074D8D9D1C2B1FDD007B5516 /* Dribbble.h */,
+				074D8D9E1C2B1FDD007B5516 /* Dribbble.m */,
+				074D8D9F1C2B1FDD007B5516 /* URLParser.h */,
+				074D8DA01C2B1FDD007B5516 /* URLParser.m */,
 			);
 			name = Dribbble;
 			sourceTree = "<group>";
@@ -215,14 +215,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				074D8D8A1C2A319A007B5516 /* URLParser.m in Sources */,
 				074D8D751C2A313E007B5516 /* ViewController.m in Sources */,
 				074D8D721C2A313E007B5516 /* AppDelegate.m in Sources */,
 				074D8D6F1C2A313E007B5516 /* main.m in Sources */,
+				074D8DA11C2B1FDD007B5516 /* Dribbble.m in Sources */,
+				074D8DA21C2B1FDD007B5516 /* URLParser.m in Sources */,
 				074D8D8F1C2A3281007B5516 /* UIImageLoader.m in Sources */,
 				074D8D951C2A3484007B5516 /* DribbbleShotCell.m in Sources */,
 				074D8D9B1C2A3EBE007B5516 /* README.md in Sources */,
-				074D8D891C2A319A007B5516 /* Dribbble.m in Sources */,
 				074D8D981C2A3B69007B5516 /* MBProgressHUD.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
