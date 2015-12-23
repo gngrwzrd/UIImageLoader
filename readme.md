@@ -260,7 +260,7 @@ You can set default user/pass that gets sent in every request with:
 [myLoader setAuthUsername:@"username" password:@"password"];
 ````
 
-## UIImageLoaderImage For Platform Compatibility
+### UIImageLoaderImage For Platform Compatibility
 
 For compatibility between platforms, there's a typedef that UIImageLoader uses to switch out image types.
 
