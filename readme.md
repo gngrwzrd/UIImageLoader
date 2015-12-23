@@ -281,6 +281,18 @@ You can create a dribbble app very easily here (you'll at least need to signup):
 
 [https://dribbble.com/account/applications/](https://dribbble.com/account/applications/)
 
+Once you've created a dribbble application, update the ViewController.m file:
+
+````
+- (void) setupDribbble {
+	//see README.md in the DribbbleSample folder.
+	self.dribbble = [[Dribbble alloc] init];
+	self.dribbble.accessToken = @"";
+	self.dribbble.clientSecret = @"";
+	self.dribbble.clientId = @"";
+}
+````
+
 Here's the collection view cell source from the sample application:
 
 ````
