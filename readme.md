@@ -2,7 +2,7 @@
 
 UIImageLoader is a helper to load images from the web. It caches images on disk, and optionally in memory.
 
-It makes it super simple to write handler code for cached images, set a placeholder image when a network request is being made, and handle any errors on request completion.
+It makes it super simple to write handler code for cached images, set a placeholder image or show a loader when a network request is being made, and handle any errors on request completion.
 
 It supports server cache control to re-download images when expired. Cache control logic is implemented manually instead of using an NSURLCache for performance reasons.
 
@@ -11,18 +11,6 @@ You can also completely ignore server cache control and manually clean-up images
 It's very small at roughly 600+ lines of code in a single header / implementation file.
 
 Everything is asynchronous and uses modern objective-c with libdispatch and NSURLSession.
-
-## Use Case
-
-This isn't intended to compete with other frameworks that are optimized to provide fast scrolling for thousands or tens-of-thousands of images.
-
-For average apps that would like to cache images on disk and have some options for control caching, this will make a noticeable difference.
-
-My particular use case was a better disk cache that isn't NSURLCache. It provides better options for handling how server cache control is used. And get rid of delays or flickering that happens because of NSURLCache being slow.
-
-Images that are cached and available on disk load almost immediatly. This is most noticeable on table view cells.
-
-You can also cache images in memory for even faster loading.
 
 ## Server Cache Control
 
@@ -272,8 +260,117 @@ You can set default user/pass that gets sent in every request with:
 [myLoader setAuthUsername:@"username" password:@"password"];
 ````
 
+# Dribbble Sample
 
-## License
+There's a very simple sample application that shows loading images into a collection view. The app loads 1000 images from dribbble.
+
+The sample app requires a submodule, if you want to test the sample app it's best to clone this repo:
+
+````
+git clone git@github.com:/gngrwzrd/UIImageLoader.git
+cd UIImageLoader
+git submodule init
+git submodule update
+````
+
+The app demonstrates how to setup a cell to load images, but gracefully show spinners, and gracefully handle when a cell is reused but a request hasn't finished loading.
+
+You will need to create a Dribbble API application in order to test it.
+
+You can create a dribbble app very easily here (you'll at least need to signup):
+
+[https://dribbble.com/account/applications/](https://dribbble.com/account/applications/)
+
+Here's the collection view cell source from the sample application:
+
+````
+//DribbbleShot.h
+#import <UIKit/UIKit.h>
+
+@interface DribbbleShotCell : UICollectionViewCell
+@property IBOutlet UIImageView * imageView;
+@property IBOutlet UIActivityIndicatorView * indicator;
+- (void) setShot:(NSDictionary *) shot;
+@end
+
+````
+
+````
+//DribbbleShotCell.m
+#import "DribbbleShotCell.h"
+#import "UIImageLoader.h"
+
+@interface DribbbleShotCell ()
+@property BOOL cancelsTask;
+@property NSURLSessionDataTask * task;
+@property NSURL * activeImageURL;
+@end
+
+@implementation DribbbleShotCell
+
+- (void) awakeFromNib {
+	//set to FALSE to let images download even if this cells image has changed while scrolling.
+	self.cancelsTask = FALSE;
+	
+	//set to TRUE to cause downloads to cancel if a cell is being reused.
+	//self.cancelsTask = TRUE;
+}
+
+- (void) prepareForReuse {
+	self.imageView.image = nil;
+	if(self.cancelsTask) {
+		[self.task cancel];
+	}
+}
+
+- (void) setShot:(NSDictionary *) shot {
+	NSDictionary * images = shot[@"images"];
+	NSURL * url = [NSURL URLWithString:images[@"normal"]];
+	self.activeImageURL = url;
+	
+	self.task = [[UIImageLoader defaultLoader] loadImageWithURL:url hasCache:^(UIImageLoaderImage *image, UIImageLoadSource loadedFromSource) {
+		
+		//hide indicator as we have a cached image available.
+		self.indicator.hidden = TRUE;
+		
+		//use cached image
+		self.imageView.image = image;
+		
+	} sendRequest:^(BOOL didHaveCachedImage) {
+		
+		if(!didHaveCachedImage) {
+			//a cached image wasn't available, a network request is being sent, show spinner.
+			[self.indicator startAnimating];
+			self.indicator.hidden = FALSE;
+		}
+		
+	} requestCompleted:^(NSError *error, UIImageLoaderImage *image, UIImageLoadSource loadedFromSource) {
+		
+		//request complete.
+		
+		//check if url above matches self.activeURL.
+		//If they don't match this cells image is going to be different.
+		if(!self.cancelsTask && ![self.activeImageURL.absoluteString isEqualToString:url.absoluteString]) {
+			//NSLog(@"request finished, but images don't match.");
+			return;
+		}
+		
+		//hide spinner
+		self.indicator.hidden = TRUE;
+		[self.indicator stopAnimating];
+		
+		//if image was downloaded, use it.
+		if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
+			self.imageView.image = image;
+		}
+	}];
+	
+}
+
+@end
+````
+
+# License
 
 The MIT License (MIT)
 Copyright (c) 2016 Aaron Smith

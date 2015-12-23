@@ -3,6 +3,7 @@
 #import "UIImageLoader.h"
 
 @interface DribbbleShotCell ()
+@property BOOL cancelsTask;
 @property NSURLSessionDataTask * task;
 @property NSURL * activeImageURL;
 @end
