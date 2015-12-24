@@ -24,6 +24,21 @@ If a response is 304 it uses the cached image available on disk.
 
 Download, fork, clone or submodule this repo. Then add UIImageLoader.h/m to your Xcode project.
 
+## Dribbble Samples
+
+There's a very simple sample application for iOS/Mac that shows loading images into a collection view.
+
+The app loads 1000 images from Dribbble.
+
+The app demonstrates how to setup a cell to gracefully handle:
+
+* Downloading images
+* Using spinners for loading activity
+* Cancelling an image download when a cell is reused
+* Or letting the image download complete so it's cached
+
+![alt text](http://www.gngrwzrd.com/downloads/dribbble-samples-mac-ios.png")
+
 ## UIImageLoader Object
 
 There's a default configured loader which you're free to configure how you like.
@@ -272,21 +287,6 @@ typedef UIImage UIImageLoaderImage;
 typedef NSImage UIImageLoaderImage;
 #endif
 ````
-
-# Dribbble Samples
-
-There's a very simple sample application for iOS/Mac that shows loading images into a collection view.
-
-The app loads 1000 images from Dribbble.
-
-The app demonstrates how to setup a cell to gracefully handle:
-
-* Downloading images
-* Using spinners for loading activity
-* Cancelling an image download when a cell is reused
-* Or letting the image download complete so it's cached
-
-![alt text](http://www.gngrwzrd.com/downloads/dribbble-samples-mac-ios.png")
 
 # License
 
