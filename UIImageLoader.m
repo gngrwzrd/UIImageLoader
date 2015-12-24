@@ -64,7 +64,7 @@ static UIImageLoader * _default;
 //private loader properties
 @interface UIImageLoader ()
 @property NSURLSession * activeSession;
-@property (readwrite) NSURL * cacheDirectory;
+@property NSURL * activeCacheDirectory;
 @property NSString * auth;
 @end
 
@@ -79,8 +79,12 @@ static UIImageLoader * _default;
 
 - (id) init {
 	NSURL * appSupport = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
-	NSURL * defaultCacheDir = [appSupport URLByAppendingPathComponent:@"UIImageLoader"];
-	[[NSFileManager defaultManager] createDirectoryAtURL:defaultCacheDir withIntermediateDirectories:TRUE attributes:nil error:nil];
+	NSString * bundleId = [[NSBundle mainBundle] infoDictionary][@"CFBundleIdentifier"];
+	NSURL * defaultCacheDir = appSupport;
+	if(bundleId) {
+		defaultCacheDir = [defaultCacheDir URLByAppendingPathComponent:bundleId];
+	}
+	defaultCacheDir = [defaultCacheDir URLByAppendingPathComponent:@"UIImageLoader"];
 	self = [self initWithCacheDirectory:defaultCacheDir];
 	return self;
 }
@@ -97,6 +101,15 @@ static UIImageLoader * _default;
 	self.cacheDirectory = url;
 	self.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
 	return self;
+}
+
+- (void) setCacheDirectory:(NSURL *) cacheDirectory {
+	self.activeCacheDirectory = cacheDirectory;
+	[[NSFileManager defaultManager] createDirectoryAtURL:cacheDirectory withIntermediateDirectories:TRUE attributes:nil error:nil];
+}
+
+- (NSURL *) cacheDirectory {
+	return self.activeCacheDirectory;
 }
 
 - (void) setAuthUsername:(NSString *) username password:(NSString *) password; {

@@ -56,8 +56,8 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 //If you change this then you are responsible for implementing delegate logic for acceptsAnySSLCertificate if needed.
 @property (nonatomic) NSURLSession * session;
 
-//default location is in home/Library/Caches/UIImageLoader
-@property (readonly) NSURL * cacheDirectory;
+//default location is in home/Library/Caches/my.bundle.id/UIImageLoader
+@property (nonatomic) NSURL * cacheDirectory;
 
 //accepted content types (default = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"]).
 @property NSArray * acceptedContentTypes;
