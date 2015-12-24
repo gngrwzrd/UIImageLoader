@@ -37,7 +37,7 @@ The app demonstrates how to setup a cell to gracefully handle:
 * Cancelling an image download when a cell is reused
 * Or letting the image download complete so it's cached
 
-![sample screenshots](http://www.gngrwzrd.com/downloads/dribbble-samples-mac-ios-1.png")
+![sample screenshots](http://www.gngrwzrd.com/downloads/dribbble-samples-mac-ios-1.png)
 
 ## UIImageLoader Object
 
