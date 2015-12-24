@@ -34,14 +34,21 @@
 	self.activeURL = url;
 	
 	self.task = [[UIImageLoader defaultLoader] loadImageWithURL:self.activeURL hasCache:^(UIImageLoaderImage *image, UIImageLoadSource loadedFromSource) {
+		
 		self.imageView.image = image;
+		self.spinner.hidden = TRUE;
+		[self.spinner stopAnimation:nil];
+		
 	} sendRequest:^(BOOL didHaveCachedImage) {
+		
 		if(!didHaveCachedImage) {
 			[self.spinner startAnimation:nil];
 			self.spinner.hidden = FALSE;
 		}
+		
 	} requestCompleted:^(NSError *error, UIImageLoaderImage *image, UIImageLoadSource loadedFromSource) {
 		
+		[self.spinner stopAnimation:nil];
 		self.spinner.hidden = TRUE;
 		
 		if(!self.cancelsTask && ![self.activeURL.absoluteString isEqualToString:url.absoluteString]) {
