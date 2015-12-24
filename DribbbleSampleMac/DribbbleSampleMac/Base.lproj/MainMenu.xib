@@ -15,6 +15,7 @@
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
                 <outlet property="collectionView" destination="Y9s-O5-O5G" id="2Kz-0V-afy"/>
+                <outlet property="loading" destination="frt-y4-jUF" id="rAy-Y8-enw"/>
                 <outlet property="spinner" destination="pT7-2Q-66n" id="ne9-dQ-ZlA"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
@@ -712,10 +713,25 @@
                         <rect key="frame" x="224" y="164" width="32" height="32"/>
                         <animations/>
                     </progressIndicator>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="frt-y4-jUF">
+                        <rect key="frame" x="167" y="132" width="146" height="24"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="24" id="Y4d-3v-Hxd"/>
+                            <constraint firstAttribute="width" constant="142" id="j87-Q9-IfV"/>
+                        </constraints>
+                        <animations/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Loading JSON" id="4Z3-jy-FIT">
+                            <font key="font" metaFont="system" size="20"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="frt-y4-jUF" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="LlL-xg-f8Q"/>
                     <constraint firstItem="7cE-e0-7MO" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="-2" id="NDJ-7B-dSV"/>
                     <constraint firstItem="7cE-e0-7MO" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="Pqu-LJ-sY7"/>
+                    <constraint firstItem="frt-y4-jUF" firstAttribute="top" secondItem="pT7-2Q-66n" secondAttribute="bottom" constant="8" id="RcA-ck-9K0"/>
                     <constraint firstAttribute="trailing" secondItem="7cE-e0-7MO" secondAttribute="trailing" constant="-1" id="blV-CG-fia"/>
                     <constraint firstItem="pT7-2Q-66n" firstAttribute="centerY" secondItem="EiT-Mj-1SZ" secondAttribute="centerY" id="gMf-xS-jmv"/>
                     <constraint firstItem="pT7-2Q-66n" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="wBx-vu-t87"/>

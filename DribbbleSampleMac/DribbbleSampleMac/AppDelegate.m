@@ -55,6 +55,7 @@
 		}
 		
 		[self.dribbbleShots addObjectsFromArray:response.data];
+		
 		if(self.page < self.maxPage) {
 			[self performSelectorOnMainThread:@selector(loadDribbbleShots) withObject:nil waitUntilDone:FALSE];
 		} else {
@@ -64,8 +65,9 @@
 }
 
 - (void) finishedDribbbleLoad {
-	[self.spinner stopAnimation:nil];
+	self.loading.hidden = TRUE;
 	self.spinner.hidden = TRUE;
+	[self.spinner stopAnimation:nil];
 	[self.collectionView reloadData];
 }
 
