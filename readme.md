@@ -44,35 +44,29 @@ The app demonstrates how to setup a cell to gracefully handle:
 There's a default configured loader which you're free to configure how you like.
 
 ````
-//this is default how everything is configued by default
+//this is the default configuration:
 
-//default cache dir -> ~/Library/Caches/UIImageLoader
-NSURL * appSupport = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
-NSURL * defaultCacheDir = [appSupport URLByAppendingPathComponent:@"UIImageLoader"];
-[[NSFileManager defaultManager] createDirectoryAtURL:defaultCacheDir withIntermediateDirectories:TRUE attributes:nil error:nil];
+- (id) initWithCacheDirectory:(NSURL *) url; {
+	self = [super init];
+	self.cacheImagesInMemory = FALSE;
+	self.trustAnySSLCertificate = FALSE;
+	self.useServerCachePolicy = TRUE;
+	self.logCacheMisses = TRUE;
+	self.logResponseWarnings = TRUE;
+	self.etagOnlyCacheControl = 0;
+	self.memoryCache = [[UIImageMemoryCache alloc] init];
+	self.cacheDirectory = url;
+	self.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
+	return self;
+}
 
-//default image loader
-UIImageLoader * loader = [UIImageLoader defaultLoader];
-loader.cacheImagesInMemory = FALSE;
-loader.trustAnySSLCertificate  = FALSE;
-loader.useServerCachePolicy = TRUE;
-loader.logCacheMisses = TRUE;
-loader.logResponseWarnings = TRUE;
-loader.etagOnlyCacheControl = 0;
-loader.memoryCache.maxBytes = 25 * (1024 * 1024); //25MB;
-loader.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
 ````
 
 Or you can setup your own and configure it:
 
 ````
-//create a directory for the disk cache
-NSURL * appSupport = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
-NSURL * defaultCacheDir = [appSupport URLByAppendingPathComponent:@"UIImageLoader"];
-[[NSFileManager defaultManager] createDirectoryAtURL:defaultCacheDir withIntermediateDirectories:TRUE attributes:nil error:nil];
-
 //create loader
-UIImageLoader * loader = [[UIImageLoader alloc] initWithCacheDirectory:defaultCacheDir];
+UIImageLoader * loader = [[UIImageLoader alloc] initWithCacheDirectory:myCustomDiskURL];
 //set loader properties here.
 ````
 
@@ -208,7 +202,7 @@ _Memory cache is not shared among loaders, each loader will have it's own cache.
 
 ### Manual Cache Cleanup
 
-If you aren't using server cache control, you can use a few helper methods to cleanup images on disk:
+If you want to perform disk cache cleanup manually at the start of your application, there are a few helpers available:
 
 ````
 - (void) clearCachedFilesOlderThan1Day;
@@ -218,7 +212,7 @@ If you aren't using server cache control, you can use a few helper methods to cl
 
 These methods use the file modified date to decide which to delete.
 
-When an image is accessed using the loader the modified date is updated.
+When an image is accessed using UIImageLoader the modified date is updated.
 
 Images that are used frequently will not be removed. 
 
@@ -251,7 +245,14 @@ You can customize the NSURLSession that's used to download images like this:
 myCache.session = myNSURLSession;
 ````
 
-If you do change the session, you are responsible for implementing it's delegate if required. And implementing SSL trust for self signed certificates if required.
+If you do customize the session. Make sure to use a session that runs on a background thread:
+
+````
+NSURLSessionConfiguration * config = [NSURLSessionConfiguration defaultSessionConfiguration];
+loader.session = [NSURLSession sessionWithConfiguration:config delegate:self delegateQueue:[[NSOperationQueue alloc] init]];
+````
+
+You are responsible for implementing it's delegate if required. And implementing SSL trust for self signed certificates if required.
 
 ### NSURLSessionDataTask
 
@@ -275,7 +276,7 @@ You can set default user/pass that gets sent in every request with:
 [myLoader setAuthUsername:@"username" password:@"password"];
 ````
 
-### UIImageLoaderImage For Platform Compatibility
+### UIImageLoaderImage For Mac OS X
 
 For compatibility between platforms, there's a typedef that UIImageLoader uses to switch out image types.
 
