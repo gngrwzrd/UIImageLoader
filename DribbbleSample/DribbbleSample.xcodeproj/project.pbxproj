@@ -17,7 +17,6 @@
 		074D8D921C2A346D007B5516 /* DribbbleShotCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 074D8D911C2A346D007B5516 /* DribbbleShotCell.xib */; };
 		074D8D951C2A3484007B5516 /* DribbbleShotCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D941C2A3484007B5516 /* DribbbleShotCell.m */; };
 		074D8D981C2A3B69007B5516 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D971C2A3B69007B5516 /* MBProgressHUD.m */; };
-		074D8D9B1C2A3EBE007B5516 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D9A1C2A3EBE007B5516 /* README.md */; };
 		074D8DA11C2B1FDD007B5516 /* Dribbble.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D9E1C2B1FDD007B5516 /* Dribbble.m */; };
 		074D8DA21C2B1FDD007B5516 /* URLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8DA01C2B1FDD007B5516 /* URLParser.m */; };
 /* End PBXBuildFile section */
@@ -40,7 +39,6 @@
 		074D8D941C2A3484007B5516 /* DribbbleShotCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DribbbleShotCell.m; sourceTree = "<group>"; };
 		074D8D961C2A3B69007B5516 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MBProgressHUD.h; path = "MBProgressHUD-master-1/MBProgressHUD.h"; sourceTree = SOURCE_ROOT; };
 		074D8D971C2A3B69007B5516 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MBProgressHUD.m; path = "MBProgressHUD-master-1/MBProgressHUD.m"; sourceTree = SOURCE_ROOT; };
-		074D8D9A1C2A3EBE007B5516 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = DribbbleSample/README.md; sourceTree = "<group>"; };
 		074D8D9D1C2B1FDD007B5516 /* Dribbble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dribbble.h; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/Dribbble.h"; sourceTree = SOURCE_ROOT; };
 		074D8D9E1C2B1FDD007B5516 /* Dribbble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Dribbble.m; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/Dribbble.m"; sourceTree = SOURCE_ROOT; };
 		074D8D9F1C2B1FDD007B5516 /* URLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLParser.h; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/URLParser.h"; sourceTree = SOURCE_ROOT; };
@@ -61,7 +59,6 @@
 		074D8D611C2A313E007B5516 = {
 			isa = PBXGroup;
 			children = (
-				074D8D9A1C2A3EBE007B5516 /* README.md */,
 				074D8D6C1C2A313E007B5516 /* DribbbleSample */,
 				074D8D9C1C2A4013007B5516 /* Frameworks */,
 				074D8D6D1C2A313E007B5516 /* Supporting Files */,
@@ -222,7 +219,6 @@
 				074D8DA21C2B1FDD007B5516 /* URLParser.m in Sources */,
 				074D8D8F1C2A3281007B5516 /* UIImageLoader.m in Sources */,
 				074D8D951C2A3484007B5516 /* DribbbleShotCell.m in Sources */,
-				074D8D9B1C2A3EBE007B5516 /* README.md in Sources */,
 				074D8D981C2A3B69007B5516 /* MBProgressHUD.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -364,6 +360,7 @@
 				074D8D831C2A313E007B5516 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
