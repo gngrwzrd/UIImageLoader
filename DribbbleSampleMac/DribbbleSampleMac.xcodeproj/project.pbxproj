@@ -1,0 +1,332 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		074D8DB11C2B7FAC007B5516 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8DB01C2B7FAC007B5516 /* AppDelegate.m */; };
+		074D8DB41C2B7FAC007B5516 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8DB31C2B7FAC007B5516 /* main.m */; };
+		074D8DB61C2B7FAC007B5516 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 074D8DB51C2B7FAC007B5516 /* Assets.xcassets */; };
+		074D8DB91C2B7FAC007B5516 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 074D8DB71C2B7FAC007B5516 /* MainMenu.xib */; };
+		074D8DC51C2B7FDA007B5516 /* Dribbble.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8DC21C2B7FDA007B5516 /* Dribbble.m */; };
+		074D8DC61C2B7FDA007B5516 /* URLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8DC41C2B7FDA007B5516 /* URLParser.m */; };
+		074D8DC91C2B818F007B5516 /* DribbbleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8DC81C2B818F007B5516 /* DribbbleCell.m */; };
+		074D8DCD1C2B81B7007B5516 /* DribbbleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 074D8DCC1C2B81B7007B5516 /* DribbbleCell.xib */; };
+		074D8DD01C2B827C007B5516 /* UIImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8DCF1C2B827C007B5516 /* UIImageLoader.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		074D8DAC1C2B7FAC007B5516 /* DribbbleSampleMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DribbbleSampleMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		074D8DAF1C2B7FAC007B5516 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		074D8DB01C2B7FAC007B5516 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		074D8DB31C2B7FAC007B5516 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		074D8DB51C2B7FAC007B5516 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		074D8DB81C2B7FAC007B5516 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		074D8DBA1C2B7FAC007B5516 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		074D8DC11C2B7FDA007B5516 /* Dribbble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dribbble.h; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/Dribbble.h"; sourceTree = SOURCE_ROOT; };
+		074D8DC21C2B7FDA007B5516 /* Dribbble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Dribbble.m; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/Dribbble.m"; sourceTree = SOURCE_ROOT; };
+		074D8DC31C2B7FDA007B5516 /* URLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLParser.h; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/URLParser.h"; sourceTree = SOURCE_ROOT; };
+		074D8DC41C2B7FDA007B5516 /* URLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = URLParser.m; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/URLParser.m"; sourceTree = SOURCE_ROOT; };
+		074D8DC71C2B818F007B5516 /* DribbbleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DribbbleCell.h; sourceTree = "<group>"; };
+		074D8DC81C2B818F007B5516 /* DribbbleCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DribbbleCell.m; sourceTree = "<group>"; };
+		074D8DCC1C2B81B7007B5516 /* DribbbleCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DribbbleCell.xib; sourceTree = "<group>"; };
+		074D8DCE1C2B827C007B5516 /* UIImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIImageLoader.h; path = ../../UIImageLoader.h; sourceTree = "<group>"; };
+		074D8DCF1C2B827C007B5516 /* UIImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIImageLoader.m; path = ../../UIImageLoader.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		074D8DA91C2B7FAC007B5516 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		074D8DA31C2B7FAC007B5516 = {
+			isa = PBXGroup;
+			children = (
+				074D8DAE1C2B7FAC007B5516 /* DribbbleSampleMac */,
+				074D8DAD1C2B7FAC007B5516 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		074D8DAD1C2B7FAC007B5516 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				074D8DAC1C2B7FAC007B5516 /* DribbbleSampleMac.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		074D8DAE1C2B7FAC007B5516 /* DribbbleSampleMac */ = {
+			isa = PBXGroup;
+			children = (
+				074D8DD11C2B827D007B5516 /* UIImageLoader */,
+				074D8DC01C2B7FD1007B5516 /* Dribbble */,
+				074D8DAF1C2B7FAC007B5516 /* AppDelegate.h */,
+				074D8DB01C2B7FAC007B5516 /* AppDelegate.m */,
+				074D8DB71C2B7FAC007B5516 /* MainMenu.xib */,
+				074D8DB21C2B7FAC007B5516 /* Supporting Files */,
+				074D8DC71C2B818F007B5516 /* DribbbleCell.h */,
+				074D8DC81C2B818F007B5516 /* DribbbleCell.m */,
+				074D8DCC1C2B81B7007B5516 /* DribbbleCell.xib */,
+			);
+			path = DribbbleSampleMac;
+			sourceTree = "<group>";
+		};
+		074D8DB21C2B7FAC007B5516 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				074D8DBA1C2B7FAC007B5516 /* Info.plist */,
+				074D8DB51C2B7FAC007B5516 /* Assets.xcassets */,
+				074D8DB31C2B7FAC007B5516 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		074D8DC01C2B7FD1007B5516 /* Dribbble */ = {
+			isa = PBXGroup;
+			children = (
+				074D8DC11C2B7FDA007B5516 /* Dribbble.h */,
+				074D8DC21C2B7FDA007B5516 /* Dribbble.m */,
+				074D8DC31C2B7FDA007B5516 /* URLParser.h */,
+				074D8DC41C2B7FDA007B5516 /* URLParser.m */,
+			);
+			name = Dribbble;
+			sourceTree = "<group>";
+		};
+		074D8DD11C2B827D007B5516 /* UIImageLoader */ = {
+			isa = PBXGroup;
+			children = (
+				074D8DCE1C2B827C007B5516 /* UIImageLoader.h */,
+				074D8DCF1C2B827C007B5516 /* UIImageLoader.m */,
+			);
+			name = UIImageLoader;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		074D8DAB1C2B7FAC007B5516 /* DribbbleSampleMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 074D8DBD1C2B7FAC007B5516 /* Build configuration list for PBXNativeTarget "DribbbleSampleMac" */;
+			buildPhases = (
+				074D8DA81C2B7FAC007B5516 /* Sources */,
+				074D8DA91C2B7FAC007B5516 /* Frameworks */,
+				074D8DAA1C2B7FAC007B5516 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DribbbleSampleMac;
+			productName = DribbbleSampleMac;
+			productReference = 074D8DAC1C2B7FAC007B5516 /* DribbbleSampleMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		074D8DA41C2B7FAC007B5516 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0710;
+				ORGANIZATIONNAME = gngrwzrd;
+				TargetAttributes = {
+					074D8DAB1C2B7FAC007B5516 = {
+						CreatedOnToolsVersion = 7.1.1;
+					};
+				};
+			};
+			buildConfigurationList = 074D8DA71C2B7FAC007B5516 /* Build configuration list for PBXProject "DribbbleSampleMac" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 074D8DA31C2B7FAC007B5516;
+			productRefGroup = 074D8DAD1C2B7FAC007B5516 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				074D8DAB1C2B7FAC007B5516 /* DribbbleSampleMac */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		074D8DAA1C2B7FAC007B5516 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				074D8DCD1C2B81B7007B5516 /* DribbbleCell.xib in Resources */,
+				074D8DB61C2B7FAC007B5516 /* Assets.xcassets in Resources */,
+				074D8DB91C2B7FAC007B5516 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		074D8DA81C2B7FAC007B5516 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				074D8DB41C2B7FAC007B5516 /* main.m in Sources */,
+				074D8DC51C2B7FDA007B5516 /* Dribbble.m in Sources */,
+				074D8DC91C2B818F007B5516 /* DribbbleCell.m in Sources */,
+				074D8DC61C2B7FDA007B5516 /* URLParser.m in Sources */,
+				074D8DD01C2B827C007B5516 /* UIImageLoader.m in Sources */,
+				074D8DB11C2B7FAC007B5516 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		074D8DB71C2B7FAC007B5516 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				074D8DB81C2B7FAC007B5516 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		074D8DBB1C2B7FAC007B5516 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		074D8DBC1C2B7FAC007B5516 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		074D8DBE1C2B7FAC007B5516 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = DribbbleSampleMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gngrwzrd.DribbbleSampleMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		074D8DBF1C2B7FAC007B5516 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = DribbbleSampleMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gngrwzrd.DribbbleSampleMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		074D8DA71C2B7FAC007B5516 /* Build configuration list for PBXProject "DribbbleSampleMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				074D8DBB1C2B7FAC007B5516 /* Debug */,
+				074D8DBC1C2B7FAC007B5516 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		074D8DBD1C2B7FAC007B5516 /* Build configuration list for PBXNativeTarget "DribbbleSampleMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				074D8DBE1C2B7FAC007B5516 /* Debug */,
+				074D8DBF1C2B7FAC007B5516 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 074D8DA41C2B7FAC007B5516 /* Project object */;
+}
