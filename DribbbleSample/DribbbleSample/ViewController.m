@@ -27,7 +27,7 @@
 	[self setupDribbble];
 	
 	MBProgressHUD * hud = [MBProgressHUD showHUDAddedTo:self.view animated:TRUE];
-	hud.labelText = @"Loading Dribbble Shots";
+	hud.labelText = @"Loading JSON";
 	
 	[self loadDribbbleShots];
 }

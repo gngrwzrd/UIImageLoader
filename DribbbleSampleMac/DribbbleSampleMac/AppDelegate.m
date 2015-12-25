@@ -18,8 +18,9 @@
 	
 	UIImageLoader * loader = [UIImageLoader defaultLoader];
 	NSLog(@"cache path: %@",loader.cacheDirectory);
-	//loader.cacheImagesInMemory = TRUE;
-	loader.trustAnySSLCertificate = TRUE;
+	loader.cacheImagesInMemory = TRUE;
+	loader.memoryCache.maxBytes = 50 * (1024 * 1024); //50MB
+	[loader clearCachedFilesModifiedOlderThan1Week];
 	
 	self.page = 0;
 	self.maxPage = 10;
