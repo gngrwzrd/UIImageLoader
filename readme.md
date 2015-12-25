@@ -24,7 +24,8 @@ If a response is 304 it uses the cached image available on disk.
 
 ## Installation
 
-Download, fork, clone or submodule this repo. Then add UIImageLoader.h/m to your Xcode project.
+* Download a zip of this repo
+* Add UIImageLoader.h and UIImageLoader.m to your Xcode project
 
 ## Dribbble Samples
 
