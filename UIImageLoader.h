@@ -20,6 +20,8 @@ typedef NSImage UIImageLoaderImage;
 
 //image source passed in completion callbacks.
 typedef NS_ENUM(NSInteger,UIImageLoadSource) {
+	
+	//this is passed to callbacks when there's an error, no image is provided.
 	UIImageLoadSourceNone,               //no image source as there was an error.
 	
 	//these will be passed to your hasCache callback
@@ -29,7 +31,7 @@ typedef NS_ENUM(NSInteger,UIImageLoadSource) {
     //these will be passed to your requestCompleted callback
 	UIImageLoadSourceNetworkNotModified, //a network request was sent but existing content is still valid
 	UIImageLoadSourceNetworkToDisk,      //a network request was sent, image was updated on disk
-	UIImageLoadSourceNetworkCancelled,   //a network request was sent, but the NSURLSessionDataTask was cancelled.
+	
 };
 
 //forward
@@ -65,20 +67,18 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 //whether to use server cache policy. Default is TRUE
 @property BOOL useServerCachePolicy;
 
-//if useServerCachePolicy=true and response has only ETag header, cache the image for this amount of time. 0 = no cache.
-@property NSTimeInterval etagOnlyCacheControl;
-
-//whether to cache loaded images (from disk) into memory.
-@property BOOL cacheImagesInMemory;
+//if using server cache control, and the server doesn't return a Cache-Control max-age header, you can use this
+//to provide your own max age for caching before the image is requested again.
+@property NSTimeInterval defaultCacheControlMaxAge;
 
 //Whether to trust any ssl certificate. Default is FALSE
 @property BOOL trustAnySSLCertificate;
 
+//whether to cache loaded images (from disk) into memory.
+@property BOOL cacheImagesInMemory;
+
 //Whether to NSLog image urls when there's a cache miss.
 @property BOOL logCacheMisses;
-
-//whether to log warnings about response headers.
-@property BOOL logResponseWarnings;
 
 //get the default configured loader.
 + (UIImageLoader *) defaultLoader;

@@ -43,6 +43,7 @@
 @interface UIImageCacheData : NSObject <NSCoding>
 @property NSTimeInterval maxage;
 @property NSString * etag;
+@property NSString * lastModified;
 @property BOOL nocache;
 @end
 
@@ -95,8 +96,7 @@ static UIImageLoader * _default;
 	self.trustAnySSLCertificate = FALSE;
 	self.useServerCachePolicy = TRUE;
 	self.logCacheMisses = TRUE;
-	self.logResponseWarnings = TRUE;
-	self.etagOnlyCacheControl = 0;
+	self.defaultCacheControlMaxAge = 0;
 	self.memoryCache = [[UIImageMemoryCache alloc] init];
 	self.cacheDirectory = url;
 	self.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
@@ -331,22 +331,14 @@ static UIImageLoader * _default;
 	//ignore built in cache from networking code. handled here instead.
 	mutableRequest.cachePolicy = NSURLRequestReloadIgnoringCacheData;
 	
-	//check if there's an etag from the server available.
+	//add etag if available
 	if(cached.etag) {
 		[mutableRequest setValue:cached.etag forHTTPHeaderField:@"If-None-Match"];
-		
-		if(self.etagOnlyCacheControl > 0) {
-			cached.maxage = self.etagOnlyCacheControl;
-		}
-		
-		if(cached.maxage == 0  && self.etagOnlyCacheControl < 1) {
-			if(self.logResponseWarnings) {
-				NSLog(@"[UIImageLoader] WARNING: Cached Image response ETag is set but no Cache-Control is available. "
-					  @"Image requests will always be sent, the response may or may not be 304. "
-					  @"Add Cache-Control policies to the server to correctly have content expire locally. "
-					  @"URL: %@",mutableRequest.URL);
-			}
-		}
+	}
+	
+	//add last modified if available
+	if(cached.lastModified) {
+		[mutableRequest setValue:cached.lastModified forKey:@"If-Modified-Since"];
 	}
 	
 	sendRequest(didSendCacheCompletion);
@@ -355,32 +347,25 @@ static UIImageLoader * _default;
 	
 	NSURLSessionDataTask * task = [[self session] dataTaskWithRequest:mutableRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
 		if(error) {
-			if(error.code == -999 && [error.domain isEqualToString:@"NSURLErrorDomain"]) {
-				requestCompleted(error,nil,UIImageLoadSourceNetworkCancelled);
-			} else {
-				requestCompleted(error,nil,UIImageLoadSourceNone);
-			}
+			requestCompleted(error,nil,UIImageLoadSourceNone);
 			return;
 		}
 		
 		NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *)response;
 		NSDictionary * headers = [httpResponse allHeaderFields];
 		
-		//304 Not Modified. Use Cache.
+		//304 Not Modified use cache
 		if(httpResponse.statusCode == 304) {
 			
 			if(headers[@"Cache-Control"]) {
 				
-				NSString * control = headers[@"Cache-Control"];
-				[self setCacheControlForCacheInfo:cached fromCacheControlString:control];
+				[self setCacheControlForCacheInfo:cached fromCacheControlString:headers[@"Cache-Control"]];
 				[self writeCacheControlData:cached toFile:cacheInfoFile];
 			
 			} else {
 				
-				if(headers[@"ETag"] && self.etagOnlyCacheControl > 0) {
-					cached.maxage = self.etagOnlyCacheControl;
-					[self writeCacheControlData:cached toFile:cacheInfoFile];
-				}
+				cached.maxage = self.defaultCacheControlMaxAge;
+				[self writeCacheControlData:cached toFile:cacheInfoFile];
 				
 			}
 			
@@ -388,7 +373,7 @@ static UIImageLoader * _default;
 			return;
 		}
 		
-		//status not OK, error.
+		//status not OK error
 		if(httpResponse.statusCode != 200) {
 			NSString * message = [NSString stringWithFormat:@"Invalid image cache response %li",(long)httpResponse.statusCode];
 			requestCompleted([NSError errorWithDomain:UIImageLoaderErrorDomain code:UIImageLoaderErrorResponseCode userInfo:@{NSLocalizedDescriptionKey:message}],nil,UIImageLoadSourceNone);
@@ -402,36 +387,21 @@ static UIImageLoader * _default;
 			return;
 		}
 		
-		//check response for etag and cache control
-		if(!headers[@"ETag"] && !headers[@"Cache-Control"]) {
-			if(self.logResponseWarnings) {
-				NSLog(@"[UIImageLoader] WARNING: You are loading images using the server cache control but the server returned neither ETag or Cache-Control. "
-					  @"Images will continue to load every time the image is needed. "
-					  @"URL: %@",mutableRequest.URL);
-			}
+		//check for Cache-Control
+		if(headers[@"Cache-Control"]) {
+			[self setCacheControlForCacheInfo:cached fromCacheControlString:headers[@"Cache-Control"]];
+		} else {
+			cached.maxage = self.defaultCacheControlMaxAge;
 		}
 		
+		//check for ETag
 		if(headers[@"ETag"]) {
 			cached.etag = headers[@"ETag"];
-			
-			if(self.etagOnlyCacheControl > 0) {
-				cached.maxage = self.etagOnlyCacheControl;
-			}
-			
-			if(!headers[@"Cache-Control"] && self.etagOnlyCacheControl < 1) {
-				if(self.logResponseWarnings ) {
-					NSLog(@"[UIImageLoader] WARNING: Image response header ETag is set but no Cache-Control is available. "
-						  @"You can set a custom cache control for this scenario with the etagOnlyCacheControl property. "
-						  @"Image requests will always be sent, the response may or may not be 304. "
-						  @"Optionally add Cache-Control policies to the server to correctly have content expire locally. "
-						  @"URL: %@",mutableRequest.URL);
-				}
-			}
 		}
 		
-		if(headers[@"Cache-Control"]) {
-			NSString * control = headers[@"Cache-Control"];
-			[self setCacheControlForCacheInfo:cached fromCacheControlString:control];
+		//check for Last Modified
+		if(headers[@"Last-Modified"]) {
+			cached.lastModified = headers[@"Last-Modified"];
 		}
 		
 		//save cached info file
@@ -483,11 +453,7 @@ static UIImageLoader * _default;
 	
 	NSURLSessionDataTask * task = [[self session] dataTaskWithRequest:mutableRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
 		if(error) {
-			if(error.code == -999 && [error.domain isEqualToString:@"NSURLErrorDomain"]) {
-				requestComplete(error,nil,UIImageLoadSourceNetworkCancelled);
-			} else {
-				requestComplete(error,nil,UIImageLoadSourceNone);
-			}
+			requestComplete(error,nil,UIImageLoadSourceNone);
 			return;
 		}
 		
@@ -587,6 +553,7 @@ static UIImageLoader * _default;
 	self = [super init];
 	self.maxage = 0;
 	self.etag = nil;
+	self.lastModified = nil;
 	return self;
 }
 
@@ -596,6 +563,7 @@ static UIImageLoader * _default;
 	self.maxage = [un decodeDoubleForKey:@"maxage"];
 	self.etag = [un decodeObjectForKey:@"etag"];
 	self.nocache = [un decodeBoolForKey:@"nocache"];
+	self.lastModified = [un decodeObjectForKey:@"lastModified"];
 	return self;
 }
 
@@ -604,6 +572,7 @@ static UIImageLoader * _default;
 	[ar encodeObject:self.etag forKey:@"etag"];
 	[ar encodeDouble:self.maxage forKey:@"maxage"];
 	[ar encodeBool:self.nocache forKey:@"nocache"];
+	[ar encodeObject:self.lastModified forKey:@"lastModified"];
 }
 
 @end
