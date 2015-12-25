@@ -178,6 +178,101 @@ _If load source is UIImageLoadSourceNetworkToDisk, it means an image was downloa
 
 _If load source is UIImageLoadSourceNetworkNotModified, it means the cached image is still valid and image=nil because it was already passed to your hasCache callback._
 
+### Table or Collection Cell Example
+
+This is taken from the DribbbleSample in the repo.
+
+Header:
+
+````
+
+#import <UIKit/UIKit.h>
+
+@interface DribbbleShotCell : UICollectionViewCell
+@property IBOutlet UIImageView * imageView;
+@property IBOutlet UIActivityIndicatorView * indicator;
+- (void) setShot:(NSDictionary *) shot;
+@end
+
+````
+
+Implementation:
+
+````
+
+#import "DribbbleShotCell.h"
+#import "UIImageLoader.h"
+
+@interface DribbbleShotCell ()
+@property BOOL cancelsTask;
+@property NSURLSessionDataTask * task;
+@property NSURL * activeImageURL;
+@end
+
+@implementation DribbbleShotCell
+
+- (void) awakeFromNib {
+	//set to FALSE to let images download even if this cells image has changed while scrolling.
+	self.cancelsTask = FALSE;
+	
+	//set to TRUE to cause downloads to cancel if a cell is being reused.
+	//self.cancelsTask = TRUE;
+}
+
+- (void) prepareForReuse {
+	self.imageView.image = nil;
+	if(self.cancelsTask) {
+		[self.task cancel];
+	}
+}
+
+- (void) setShot:(NSDictionary *) shot {
+	NSDictionary * images = shot[@"images"];
+	NSURL * url = [NSURL URLWithString:images[@"normal"]];
+	self.activeImageURL = url;
+	
+	self.task = [[UIImageLoader defaultLoader] loadImageWithURL:url hasCache:^(UIImageLoaderImage *image, UIImageLoadSource loadedFromSource) {
+		
+		//hide indicator as we have a cached image available.
+		self.indicator.hidden = TRUE;
+		
+		//use cached image
+		self.imageView.image = image;
+		
+	} sendRequest:^(BOOL didHaveCachedImage) {
+		
+		if(!didHaveCachedImage) {
+			//a cached image wasn't available, a network request is being sent, show spinner.
+			[self.indicator startAnimating];
+			self.indicator.hidden = FALSE;
+		}
+		
+	} requestCompleted:^(NSError *error, UIImageLoaderImage *image, UIImageLoadSource loadedFromSource) {
+		
+		//request complete.
+		
+		//check if url above matches self.activeURL.
+		//If they don't match it means the request that finished was for a previous image. don't use it.
+		if(!self.cancelsTask && ![self.activeImageURL.absoluteString isEqualToString:url.absoluteString]) {
+			//NSLog(@"request finished, but images don't match.");
+			return;
+		}
+		
+		//hide spinner
+		self.indicator.hidden = TRUE;
+		[self.indicator stopAnimating];
+		
+		//if image was downloaded, use it.
+		if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
+			self.imageView.image = image;
+		}
+	}];
+	
+}
+
+@end
+````
+
 ### Accepted Image Types
 
 You can customize the accepted content-types types from servers with:
