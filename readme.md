@@ -140,37 +140,43 @@ typedef NS_ENUM(NSInteger,UIImageLoadSource) {
 
 ### Has Cache Callback
 
-When you load an image with UIImageLoader, the first callback you can use is the _hasCache_ callback. It's defined as:
+When you load an image with UIImageLoader, the first callback is the _hasCache_ callback. It's defined as:
 
 ````
 typedef void(^UIImageLoader_HasCacheBlock)(UIImageLoaderImage * image, UIImageLoadSource loadedFromSource);
 ````
 
-If a cached image is available, you will get the image, and the source will be either UIImageLoadSourceDisk or UIImageLoadSourceMemory.
+_If a cached image is available, you get an image, and the loadedFromSource will be either UIImageLoadSourceDisk or UIImageLoadSourceMemory._
+
+_If the cached image is still valid (not expired), this is the only callback that will be called._
+
+_If no cached image was available, this callback isn't called._
 
 ### Send Request Callback
 
-You can use this callback to decide if you should show a placeholder or loader of some kind. If the image loader needs to make a request for the image, you will receive this callback. It's defined as:
+The second callback is _sendRequest._ This is called just before a network request will be sent for the image. You can use this to either show a placeholder image, or start a progress indicator. It's defined as:
 
 ````
 typedef void(^UIImageLoader_SendingRequestBlock)(BOOL didHaveCachedImage);
 ````
 
-The _didHaveCachedImage_ parameter tells you if a cached image was available (and that your _hasCache_ callback was called).
+_If a cached image wasn't avilable, this will be called with didHaveCachedImage=false, which indicates that the hasCache callback wasn't called._
+
+_If a cached image was available but expired, this will be called with didHaveCachedImage=true._
 
 ### Request Completed Callback
 
-This callback runs when the request has finished. It's defined as:
+The _requestCompleted_ callback runs when the request has finished. It's defined as:
 
 ````
 typedef void(^UIImageLoader_RequestCompletedBlock)(NSError * error, UIImageLoaderImage * image, UIImageLoadSource loadedFromSource);
 ````
 
-If a network error occurs, you'll receive an _error_ object and _UIImageLoadSourceNone_.
+_If a network error occurs, you'll receive an error object and UIImageLoadSourceNone._
 
-If load source is _UIImageLoadSourceNetworkToDisk_, it means a new image was downloaded. Either it was a new download, or existing cache was updated. You should use the new image provided.
+_If load source is UIImageLoadSourceNetworkToDisk, it means an image was downloaded._
 
-If load source is _UIImageLoadSourceNetworkNotModified_, it means the cached image is still valid. You won't receive an image in this case as the image was already passed to your _hasCache_ callback.
+_If load source is UIImageLoadSourceNetworkNotModified, it means the cached image is still valid and image=nil because it was already passed to your hasCache callback._
 
 ### Accepted Image Types
 
