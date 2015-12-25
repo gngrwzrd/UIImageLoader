@@ -53,7 +53,7 @@ There's a default configured loader which you're free to configure how you like.
 	self.useServerCachePolicy = TRUE;
 	self.logCacheMisses = TRUE;
 	self.logResponseWarnings = TRUE;
-	self.etagOnlyCacheControl = 0;
+	self.defaultCacheControlMaxAge = 0;
 	self.memoryCache = [[UIImageMemoryCache alloc] init];
 	self.cacheDirectory = url;
 	self.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
@@ -233,8 +233,8 @@ For image responses that return a 304, but don't include a Cache-Control header 
 You can set a default cache time for this scenario in order to stop these requests.
 
 ````
-myCache.etagOnlyCacheControl = 604800; //1 week;
-myCache.etagOnlyCacheControl = 0;      //(default) always send request to see if there's new content.
+myCache.defaultCacheControlMaxAge = 604800; //1 week;
+myCache.defaultCacheControlMaxAge = 0;      //(default) always send request to see if there's new content.
 ````
 
 ### NSURLSession
