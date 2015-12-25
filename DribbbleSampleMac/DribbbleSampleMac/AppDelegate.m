@@ -31,8 +31,6 @@
 	self.dribbble.clientSecret = @"7957361fe9c0f0e399712922e688101966e1eb243025f7d1dcb594a00f926104";
 	self.dribbble.clientId = @"e5a423e0ea9b42d05d721ea29078f19b78804c11d9ed63b51db2c4081fe25228";
 	
-	//NSNib * nib = [[NSNib alloc] initWithNibNamed:@"DribbbleCell" bundle:[NSBundle mainBundle]];
-	//[self.collectionView registerNib:nib forItemWithIdentifier:@"DribbbleCell"];
 	[self.collectionView registerClass:[DribbbleCell class] forItemWithIdentifier:@"DribbbleCell"];
 	
 	self.collectionView.dataSource = self;
