@@ -90,9 +90,23 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 - (void) setAuthUsername:(NSString *) username password:(NSString *) password;
 
 //these ignore cache policies and delete files where the modified date is older than specified amount of time.
-- (void) clearCachedFilesOlderThan1Day;
-- (void) clearCachedFilesOlderThan1Week;
-- (void) clearCachedFilesOlderThan:(NSTimeInterval) timeInterval;
+- (void) clearCachedFilesModifiedOlderThan1Day;
+- (void) clearCachedFilesModifiedOlderThan1Week;
+- (void) clearCachedFilesModifiedOlderThan:(NSTimeInterval) timeInterval;
+
+//these ignore cache policies and delete files where the created date is older than specified amount of time.
+- (void) clearCachedFilesCreatedOlderThan1Day;
+- (void) clearCachedFilesCreatedOlderThan1Week;
+- (void) clearCachedFilesCreatedOlderThan:(NSTimeInterval) timeInterval;
+
+//ignore cache policy and delete all disk cache files.
+- (void) purgeDiskCache;
+
+//purge the memory cache.
+- (void) purgeMemoryCache;
+
+//set memory cache max bytes.
+- (void) setMemoryCacheMaxBytes:(NSUInteger) maxBytes;
 
 //load an image with URL.
 - (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url

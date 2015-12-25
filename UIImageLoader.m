@@ -129,15 +129,15 @@ static UIImageLoader * _default;
 	}
 }
 
-- (void) clearCachedFilesOlderThan1Day; {
-	[self clearCachedFilesOlderThan:86400];
+- (void) clearCachedFilesModifiedOlderThan1Day; {
+	[self clearCachedFilesModifiedOlderThan:86400];
 }
 
-- (void) clearCachedFilesOlderThan1Week; {
-	[self clearCachedFilesOlderThan:604800];
+- (void) clearCachedFilesModifiedOlderThan1Week; {
+	[self clearCachedFilesModifiedOlderThan:604800];
 }
 
-- (void) clearCachedFilesOlderThan:(NSTimeInterval) timeInterval; {
+- (void) clearCachedFilesModifiedOlderThan:(NSTimeInterval) timeInterval; {
 	dispatch_queue_t background = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0);
 	dispatch_async(background, ^{
 		NSArray * files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.cacheDirectory.path error:nil];
@@ -152,6 +152,51 @@ static UIImageLoader * _default;
 			}
 		}
 	});
+}
+
+- (void) clearCachedFilesCreatedOlderThan1Day; {
+	[self clearCachedFilesCreatedOlderThan:86400];
+}
+
+- (void) clearCachedFilesCreatedOlderThan1Week; {
+	[self clearCachedFilesCreatedOlderThan:604800];
+}
+
+- (void) clearCachedFilesCreatedOlderThan:(NSTimeInterval) timeInterval; {
+	dispatch_queue_t background = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0);
+	dispatch_async(background, ^{
+		NSArray * files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.cacheDirectory.path error:nil];
+		for(NSString * file in files) {
+			NSURL * path = [self.cacheDirectory URLByAppendingPathComponent:file];
+			NSDictionary * attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path.path error:nil];
+			NSDate * created = attributes[NSFileCreationDate];
+			NSTimeInterval diff = [[NSDate date] timeIntervalSinceDate:created];
+			if(diff > timeInterval) {
+				NSLog(@"deleting cached file: %@",path.path);
+				[[NSFileManager defaultManager] removeItemAtPath:path.path error:nil];
+			}
+		}
+	});
+}
+
+- (void) purgeDiskCache; {
+	dispatch_queue_t background = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0);
+	dispatch_async(background, ^{
+		NSArray * files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.cacheDirectory.path error:nil];
+		for(NSString * file in files) {
+			NSURL * path = [self.cacheDirectory URLByAppendingPathComponent:file];
+			NSLog(@"deleting cached file: %@",path.path);
+			[[NSFileManager defaultManager] removeItemAtPath:path.path error:nil];
+		}
+	});
+}
+
+- (void) purgeMemoryCache; {
+	[self.memoryCache purge];
+}
+
+- (void) setMemoryCacheMaxBytes:(NSUInteger) maxBytes; {
+	self.memoryCache.maxBytes = maxBytes;
 }
 
 - (void) setSession:(NSURLSession *) session {

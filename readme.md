@@ -122,6 +122,8 @@ The enum UIImageLoadSource provides you with where the image was loaded from:
 ````
 //image source passed in completion callbacks.
 typedef NS_ENUM(NSInteger,UIImageLoadSource) {
+	
+	//this is passed to callbacks when there's an error, no image is provided.
 	UIImageLoadSourceNone,               //no image source as there was an error.
 	
 	//these will be passed to your hasCache callback
@@ -131,7 +133,7 @@ typedef NS_ENUM(NSInteger,UIImageLoadSource) {
     //these will be passed to your requestCompleted callback
 	UIImageLoadSourceNetworkNotModified, //a network request was sent but existing content is still valid
 	UIImageLoadSourceNetworkToDisk,      //a network request was sent, image was updated on disk
-	UIImageLoadSourceNetworkCancelled,   //a network request was sent, but the NSURLSessionDataTask was cancelled
+	
 };
 ````
 
@@ -190,43 +192,52 @@ You can change the memory limit with:
 
 ````
 UIImageLoader * loader = [UIImageLoader defaultLoader];
-loader.memoryCache.maxBytes = 50 * (1024 * 1024); //50MB;
+[loader setMemoryCacheMaxBytes:50 * (1024 * 1024)]; //50MB
 ````
 
 You can purge memory with:
 
 ````
 UIImageLoader * loader = [UIImageLoader defaultLoader];
-[loader.memoryCache purge];
+[loader purgeMemoryCache];
 ````
 
 _Memory cache is not shared among loaders, each loader will have it's own cache._
 
-### Manual Cache Cleanup
+### Manual Disk Cache Cleanup
 
-If you want to perform disk cache cleanup manually at the start of your application, there are a few helpers available:
+When an image is accessed using UIImageLoader the file's modified date is updated.
+
+These methods use the file modified date to decide which to delete. You can use these methods to ensure frequently used files will not be delete.
 
 ````
-- (void) clearCachedFilesOlderThan1Day;
-- (void) clearCachedFilesOlderThan1Week;
-- (void) clearCachedFilesOlderThan:(NSTimeInterval) timeInterval;
+- (void) clearCachedFilesModifiedOlderThan1Day;
+- (void) clearCachedFilesModifiedOlderThan1Week;
+- (void) clearCachedFilesModifiedOlderThan:(NSTimeInterval) timeInterval;
 ````
 
-These methods use the file modified date to decide which to delete.
+These methods use the file created date to decide which to delete.
 
-When an image is accessed using UIImageLoader the modified date is updated.
+````
+- (void) clearCachedFilesCreatedOlderThan1Day;
+- (void) clearCachedFilesCreatedOlderThan1Week;
+- (void) clearCachedFilesCreatedOlderThan:(NSTimeInterval) timeInterval;
+````
 
-Images that are used frequently will not be removed. 
+You can purge the entire disk cache with:
 
-It's easy to put some cleanup in app delegate:
+````
+- (void) purgeDiskCache;
+````
+
+It's easy to put some cleanup in app delegate. Using one of the methods available you can keep the disk cache clean, while keeping frequently used images.
 
 ````
 - (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     UIImageLoader * loader = [UIImageLoader defaultLoader];
-    [loader clearCachedFilesOlderThan1Week];
+    [loader clearCachedFilesModifiedOlderThan1Week];
 }
 ````
-
 
 ### 304 Not Modified Images
 
