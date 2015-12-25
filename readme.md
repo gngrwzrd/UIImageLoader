@@ -14,9 +14,11 @@ Everything is asynchronous and uses modern objective-c with libdispatch and NSUR
 
 ## Server Cache Control
 
-It works with servers that support ETag/If-None-Match and Cache-Control headers.
+It supports responses with Cache-Control max age, ETag, and Last-Modified headers.
 
-If the server responds with only ETag you can optionally cache the image for a default amount of time. Or let the loader make requests each time to check for new content.
+It sends requests with If-None-Match, and If-Modified-Since.
+
+If the server doesn't respond with a Cache-Control header, you can optionally set a default cache control max age in order to cache the image for a specified time.
 
 If a response is 304 it uses the cached image available on disk.
 
