@@ -148,9 +148,9 @@ typedef void(^UIImageLoader_HasCacheBlock)(UIImageLoaderImage * image, UIImageLo
 
 _If a cached image is available, you get an image, and the loadedFromSource will be either UIImageLoadSourceDisk or UIImageLoadSourceMemory._
 
-_If the cached image is still valid (not expired), this is the only callback that will be called._
-
 _If no cached image was available, this callback isn't called._
+
+_**If the cached image is still valid (not expired), this is the only callback that will be called.**_
 
 ### Send Request Callback
 
