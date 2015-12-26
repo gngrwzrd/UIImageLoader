@@ -318,7 +318,7 @@ static UIImageLoader * _default;
 
 - (NSURLSessionDataTask *) cacheImageWithRequestUsingCacheControl:(NSURLRequest *) request
 	hasCache:(UIImageLoaderDiskURLCompletion) hasCache
-	sendRequest:(UIImageLoader_SendingRequestBlock) sendRequest
+	sendingRequest:(UIImageLoader_SendingRequestBlock) sendingRequest
 	requestCompleted:(UIImageLoaderURLCompletion) requestCompleted {
 	
 	if(!request.URL) {
@@ -386,7 +386,7 @@ static UIImageLoader * _default;
 		[mutableRequest setValue:cached.lastModified forKey:@"If-Modified-Since"];
 	}
 	
-	sendRequest(didSendCacheCompletion);
+	sendingRequest(didSendCacheCompletion);
 	
 	__weak UIImageLoader * weakself = self;
 	
@@ -465,12 +465,12 @@ static UIImageLoader * _default;
 
 - (NSURLSessionDataTask *) cacheImageWithRequest:(NSURLRequest *) request
 	hasCache:(UIImageLoaderDiskURLCompletion) hasCache
-	sendRequest:(UIImageLoader_SendingRequestBlock) sendRequest
+	sendingRequest:(UIImageLoader_SendingRequestBlock) sendingRequest
 	requestComplete:(UIImageLoaderURLCompletion) requestComplete {
 	
 	//if use server cache policies, use other method.
 	if(self.useServerCachePolicy) {
-		return [self cacheImageWithRequestUsingCacheControl:request hasCache:hasCache sendRequest:sendRequest requestCompleted:requestComplete];
+		return [self cacheImageWithRequestUsingCacheControl:request hasCache:hasCache sendingRequest:sendingRequest requestCompleted:requestComplete];
 	}
 	
 	if(!request.URL) {
@@ -492,7 +492,7 @@ static UIImageLoader * _default;
 		NSLog(@"[UIImageLoader] cache miss for url: %@",mutableRequest.URL);
 	}
 	
-	sendRequest(FALSE);
+	sendingRequest(FALSE);
 	
 	__weak UIImageLoader * weakSelf = self;
 	
@@ -529,7 +529,7 @@ static UIImageLoader * _default;
 
 - (NSURLSessionDataTask *) loadImageWithRequest:(NSURLRequest *) request
 									   hasCache:(UIImageLoader_HasCacheBlock) hasCache
-									sendRequest:(UIImageLoader_SendingRequestBlock) sendRequest
+									sendingRequest:(UIImageLoader_SendingRequestBlock) sendingRequest
 							   requestCompleted:(UIImageLoader_RequestCompletedBlock) requestCompleted; {
 	
 	//check memory cache
@@ -552,10 +552,10 @@ static UIImageLoader * _default;
 			});
 		}];
 		
-	} sendRequest:^(BOOL didHaveCache) {
+	} sendingRequest:^(BOOL didHaveCache) {
 		
 		dispatch_async(dispatch_get_main_queue(), ^{
-			sendRequest(didHaveCache);
+			sendingRequest(didHaveCache);
 		});
 		
 	} requestComplete:^(NSError *error, NSURL *diskURL, UIImageLoadSource loadedFromSource) {
@@ -580,10 +580,10 @@ static UIImageLoader * _default;
 
 - (NSURLSessionDataTask *) loadImageWithURL:(NSURL *) url
 									   hasCache:(UIImageLoader_HasCacheBlock) hasCache
-									sendRequest:(UIImageLoader_SendingRequestBlock) sendRequest
+									sendingRequest:(UIImageLoader_SendingRequestBlock) sendingRequest
 							   requestCompleted:(UIImageLoader_RequestCompletedBlock) requestCompleted; {
 	NSURLRequest * request = [NSURLRequest requestWithURL:url];
-	return [self loadImageWithRequest:request hasCache:hasCache sendRequest:sendRequest requestCompleted:requestCompleted];
+	return [self loadImageWithRequest:request hasCache:hasCache sendingRequest:sendingRequest requestCompleted:requestCompleted];
 }
 
 @end

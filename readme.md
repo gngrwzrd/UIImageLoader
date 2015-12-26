@@ -87,7 +87,7 @@ hasCache:^(UIImageLoaderImage * image, UIImageLoadSource loadedFromSource) {
 	//there was a cached image available. use that.
 	self.imageView.image = image;
 	
-} sendRequest:^(BOOL didHaveCachedImage) {
+} sendingRequest:^(BOOL didHaveCachedImage) {
 	
 	//a request is being made for the image.
 	
@@ -152,9 +152,9 @@ _If no cached image was available, this callback isn't called._
 
 _**If the cached image is still valid (not expired), this is the only callback that will be called.**_
 
-### Send Request Callback
+### Sending Request Callback
 
-The second callback is _sendRequest._ This is called just before a network request will be sent for the image. You can use this to either show a placeholder image, or start a progress indicator. It's defined as:
+The second callback is _sendingRequest._ This is called just before a network request will be sent for the image. You can use this to either show a placeholder image, or start a progress indicator. It's defined as:
 
 ````
 typedef void(^UIImageLoader_SendingRequestBlock)(BOOL didHaveCachedImage);
@@ -239,7 +239,7 @@ Implementation:
 		//use cached image
 		self.imageView.image = image;
 		
-	} sendRequest:^(BOOL didHaveCachedImage) {
+	} sendingRequest:^(BOOL didHaveCachedImage) {
 		
 		if(!didHaveCachedImage) {
 			//a cached image wasn't available, a network request is being sent, show spinner.

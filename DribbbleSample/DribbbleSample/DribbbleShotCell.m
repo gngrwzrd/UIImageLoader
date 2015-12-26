@@ -38,7 +38,7 @@
 		//use cached image
 		self.imageView.image = image;
 		
-	} sendRequest:^(BOOL didHaveCachedImage) {
+	} sendingRequest:^(BOOL didHaveCachedImage) {
 		
 		if(!didHaveCachedImage) {
 			//a cached image wasn't available, a network request is being sent, show spinner.

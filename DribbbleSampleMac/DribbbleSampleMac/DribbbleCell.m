@@ -39,7 +39,7 @@
 		self.spinner.hidden = TRUE;
 		[self.spinner stopAnimation:nil];
 		
-	} sendRequest:^(BOOL didHaveCachedImage) {
+	} sendingRequest:^(BOOL didHaveCachedImage) {
 		
 		if(!didHaveCachedImage) {
 			[self.spinner startAnimation:nil];
