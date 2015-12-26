@@ -20,11 +20,7 @@
 
 - (void) cacheImage:(UIImageLoaderImage *) image forURL:(NSURL *) url; {
 	if(image) {
-#if TARGET_OS_IPHONE
 		NSUInteger cost = (image.size.width * image.size.height) * 4;
-#elif TARGET_OS_MAC
-		NSUInteger cost = (image.size.width * image.size.height) * 4;
-#endif
 		[self.cache setObject:image forKey:url.path cost:cost];
 	}
 }

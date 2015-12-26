@@ -16,6 +16,8 @@
 		074D8DC91C2B818F007B5516 /* DribbbleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8DC81C2B818F007B5516 /* DribbbleCell.m */; };
 		074D8DCD1C2B81B7007B5516 /* DribbbleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 074D8DCC1C2B81B7007B5516 /* DribbbleCell.xib */; };
 		074D8DD01C2B827C007B5516 /* UIImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8DCF1C2B827C007B5516 /* UIImageLoader.m */; };
+		076A746F1C2E1150000F36C8 /* dribbble_ball.png in Resources */ = {isa = PBXBuildFile; fileRef = 076A746D1C2E1150000F36C8 /* dribbble_ball.png */; };
+		076A74701C2E1150000F36C8 /* dribbble_ball@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 076A746E1C2E1150000F36C8 /* dribbble_ball@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +37,8 @@
 		074D8DCC1C2B81B7007B5516 /* DribbbleCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DribbbleCell.xib; sourceTree = "<group>"; };
 		074D8DCE1C2B827C007B5516 /* UIImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIImageLoader.h; path = ../../UIImageLoader.h; sourceTree = "<group>"; };
 		074D8DCF1C2B827C007B5516 /* UIImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIImageLoader.m; path = ../../UIImageLoader.m; sourceTree = "<group>"; };
+		076A746D1C2E1150000F36C8 /* dribbble_ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dribbble_ball.png; sourceTree = "<group>"; };
+		076A746E1C2E1150000F36C8 /* dribbble_ball@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dribbble_ball@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +87,8 @@
 		074D8DB21C2B7FAC007B5516 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				076A746D1C2E1150000F36C8 /* dribbble_ball.png */,
+				076A746E1C2E1150000F36C8 /* dribbble_ball@2x.png */,
 				074D8DBA1C2B7FAC007B5516 /* Info.plist */,
 				074D8DB51C2B7FAC007B5516 /* Assets.xcassets */,
 				074D8DB31C2B7FAC007B5516 /* main.m */,
@@ -167,6 +173,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				076A74701C2E1150000F36C8 /* dribbble_ball@2x.png in Resources */,
+				076A746F1C2E1150000F36C8 /* dribbble_ball.png in Resources */,
 				074D8DCD1C2B81B7007B5516 /* DribbbleCell.xib in Resources */,
 				074D8DB61C2B7FAC007B5516 /* Assets.xcassets in Resources */,
 				074D8DB91C2B7FAC007B5516 /* MainMenu.xib in Resources */,
@@ -325,6 +333,7 @@
 				074D8DBF1C2B7FAC007B5516 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

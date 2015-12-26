@@ -19,6 +19,8 @@
 		074D8D981C2A3B69007B5516 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D971C2A3B69007B5516 /* MBProgressHUD.m */; };
 		074D8DA11C2B1FDD007B5516 /* Dribbble.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8D9E1C2B1FDD007B5516 /* Dribbble.m */; };
 		074D8DA21C2B1FDD007B5516 /* URLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 074D8DA01C2B1FDD007B5516 /* URLParser.m */; };
+		076A74731C2E11A9000F36C8 /* dribbble_ball.png in Resources */ = {isa = PBXBuildFile; fileRef = 076A74711C2E11A9000F36C8 /* dribbble_ball.png */; };
+		076A74741C2E11A9000F36C8 /* dribbble_ball@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 076A74721C2E11A9000F36C8 /* dribbble_ball@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +45,8 @@
 		074D8D9E1C2B1FDD007B5516 /* Dribbble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Dribbble.m; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/Dribbble.m"; sourceTree = SOURCE_ROOT; };
 		074D8D9F1C2B1FDD007B5516 /* URLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLParser.h; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/URLParser.h"; sourceTree = SOURCE_ROOT; };
 		074D8DA01C2B1FDD007B5516 /* URLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = URLParser.m; path = "dribbble-api-modern-objc/dribbble-api-modern-objc/URLParser.m"; sourceTree = SOURCE_ROOT; };
+		076A74711C2E11A9000F36C8 /* dribbble_ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dribbble_ball.png; sourceTree = "<group>"; };
+		076A74721C2E11A9000F36C8 /* dribbble_ball@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dribbble_ball@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +97,8 @@
 		074D8D6D1C2A313E007B5516 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				076A74711C2E11A9000F36C8 /* dribbble_ball.png */,
+				076A74721C2E11A9000F36C8 /* dribbble_ball@2x.png */,
 				074D8D7E1C2A313E007B5516 /* Info.plist */,
 				074D8D7B1C2A313E007B5516 /* LaunchScreen.storyboard */,
 				074D8D791C2A313E007B5516 /* Assets.xcassets */,
@@ -198,6 +204,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				076A74731C2E11A9000F36C8 /* dribbble_ball.png in Resources */,
+				076A74741C2E11A9000F36C8 /* dribbble_ball@2x.png in Resources */,
 				074D8D7D1C2A313E007B5516 /* LaunchScreen.storyboard in Resources */,
 				074D8D921C2A346D007B5516 /* DribbbleShotCell.xib in Resources */,
 				074D8D8C1C2A3205007B5516 /* ViewController.xib in Resources */,

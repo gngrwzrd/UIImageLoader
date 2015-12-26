@@ -11,6 +11,10 @@
 @implementation DribbbleShotCell
 
 - (void) awakeFromNib {
+	self.imageView.image = [UIImage imageNamed:@"dribbble_ball"];
+	self.imageView.contentMode = UIViewContentModeCenter;
+	[self.indicator startAnimating];
+	
 	//set to FALSE to let images download even if this cells image has changed while scrolling.
 	self.cancelsTask = FALSE;
 	
@@ -19,7 +23,9 @@
 }
 
 - (void) prepareForReuse {
-	self.imageView.image = nil;
+	self.imageView.image = [UIImage imageNamed:@"dribbble_ball"];
+	self.imageView.contentMode = UIViewContentModeCenter;
+	
 	if(self.cancelsTask) {
 		[self.task cancel];
 	}
@@ -37,6 +43,7 @@
 		
 		//use cached image
 		self.imageView.image = image;
+		self.imageView.contentMode = UIViewContentModeScaleAspectFit;
 		
 	} sendingRequest:^(BOOL didHaveCachedImage) {
 		
@@ -64,6 +71,7 @@
 		//if image was downloaded, use it.
 		if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
 			self.imageView.image = image;
+			self.imageView.contentMode = UIViewContentModeScaleAspectFit;
 		}
 	}];
 	

@@ -19,7 +19,7 @@
 }
 
 - (void) prepareForReuse {
-	self.imageView.image = nil;
+	self.imageView.image = [NSImage imageNamed:@"dribbble_ball"];
 	self.spinner.hidden = TRUE;
 	if(self.cancelsTask) {
 		[self.task cancel];
