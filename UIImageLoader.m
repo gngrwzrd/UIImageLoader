@@ -1,10 +1,7 @@
 
 #import "UIImageLoader.h"
 
-/**********************/
 /* UIImageMemoryCache */
-/**********************/
-
 @interface UIImageMemoryCache ()
 @property NSCache * cache;
 @end
@@ -65,6 +62,7 @@ static UIImageLoader * _default;
 @property NSString * auth;
 @end
 
+/* UIImageLoader */
 @implementation UIImageLoader
 
 + (UIImageLoader *) defaultLoader {
