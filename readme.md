@@ -54,12 +54,10 @@ loader.cacheImagesInMemory = FALSE;
 loader.trustAnySSLCertificate = FALSE;
 loader.useServerCachePolicy = TRUE;
 loader.logCacheMisses = TRUE;
-loader.logResponseWarnings = TRUE;
 loader.defaultCacheControlMaxAge = 0;
-loader.memoryCache = [[UIImageMemoryCache alloc] init];
 loader.cacheDirectory = url;
 loader.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
-
+[loader setMemoryCacheMaxBytes:25 * (1024 * 1024)]; //25 MB
 ````
 
 Or you can setup your own and configure it:
