@@ -382,8 +382,6 @@ static UIImageLoader * _default;
 	
 	sendingRequest(didSendCacheCompletion);
 	
-	__weak UIImageLoader * weakself = self;
-	
 	NSURLSessionDataTask * task = [[self session] dataTaskWithRequest:mutableRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
 		if(error) {
 			requestCompleted(error,nil,UIImageLoadSourceNone);
@@ -421,7 +419,7 @@ static UIImageLoader * _default;
 		
 		//check that content type is an image.
 		NSString * contentType = headers[@"Content-Type"];
-		if(![weakself acceptedContentType:contentType]) {
+		if(![self acceptedContentType:contentType]) {
 			requestCompleted([NSError errorWithDomain:UIImageLoaderErrorDomain code:UIImageLoaderErrorContentType userInfo:@{NSLocalizedDescriptionKey:@"Response was not an image"}],nil,UIImageLoadSourceNone);
 			return;
 		}
@@ -444,10 +442,10 @@ static UIImageLoader * _default;
 		}
 		
 		//save cached info file
-		[weakself writeCacheControlData:cached toFile:cacheInfoFile];
+		[self writeCacheControlData:cached toFile:cacheInfoFile];
 		
 		//save image to disk
-		[weakself writeData:data toFile:cachedImageURL writeCompletion:^(NSURL *url, NSData *data) {
+		[self writeData:data toFile:cachedImageURL writeCompletion:^(NSURL *url, NSData *data) {
 			requestCompleted(nil,cachedImageURL,UIImageLoadSourceNetworkToDisk);
 		}];
 	}];
@@ -488,8 +486,6 @@ static UIImageLoader * _default;
 	
 	sendingRequest(FALSE);
 	
-	__weak UIImageLoader * weakSelf = self;
-	
 	NSURLSessionDataTask * task = [[self session] dataTaskWithRequest:mutableRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
 		if(error) {
 			requestComplete(error,nil,UIImageLoadSourceNone);
@@ -504,13 +500,13 @@ static UIImageLoader * _default;
 		}
 		
 		NSString * contentType = [[httpResponse allHeaderFields] objectForKey:@"Content-Type"];
-		if(![weakSelf acceptedContentType:contentType]) {
+		if(![self acceptedContentType:contentType]) {
 			requestComplete([NSError errorWithDomain:UIImageLoaderErrorDomain code:UIImageLoaderErrorContentType userInfo:@{NSLocalizedDescriptionKey:@"Response was not an image"}],nil,UIImageLoadSourceNone);
 			return;
 		}
 		
 		if(data) {
-			[weakSelf writeData:data toFile:cachedURL writeCompletion:^(NSURL *url, NSData *data) {
+			[self writeData:data toFile:cachedURL writeCompletion:^(NSURL *url, NSData *data) {
 				requestComplete(nil,cachedURL,UIImageLoadSourceNetworkToDisk);
 			}];
 		}
