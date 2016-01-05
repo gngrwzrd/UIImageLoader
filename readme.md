@@ -55,10 +55,11 @@ loader.trustAnySSLCertificate = FALSE;
 loader.useServerCachePolicy = TRUE;
 loader.logCacheMisses = TRUE;
 loader.defaultCacheControlMaxAge = 0;
-loader.cacheDirectory = url;
 loader.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
 [loader setMemoryCacheMaxBytes:25 * (1024 * 1024)]; //25 MB
 ````
+
+The default cache directory is _~/Library/Caches/com.my.app.id/UIImageLoader/_
 
 Or you can setup your own and configure it:
 
