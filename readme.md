@@ -49,19 +49,16 @@ There's a default configured loader which you're free to configure how you like.
 ````
 //this is the default configuration:
 
-- (id) initWithCacheDirectory:(NSURL *) url; {
-	self = [super init];
-	self.cacheImagesInMemory = FALSE;
-	self.trustAnySSLCertificate = FALSE;
-	self.useServerCachePolicy = TRUE;
-	self.logCacheMisses = TRUE;
-	self.logResponseWarnings = TRUE;
-	self.defaultCacheControlMaxAge = 0;
-	self.memoryCache = [[UIImageMemoryCache alloc] init];
-	self.cacheDirectory = url;
-	self.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
-	return self;
-}
+UIImageLoader * loader = [UIImageLoader defaultLoader];
+loader.cacheImagesInMemory = FALSE;
+loader.trustAnySSLCertificate = FALSE;
+loader.useServerCachePolicy = TRUE;
+loader.logCacheMisses = TRUE;
+loader.logResponseWarnings = TRUE;
+loader.defaultCacheControlMaxAge = 0;
+loader.memoryCache = [[UIImageMemoryCache alloc] init];
+loader.cacheDirectory = url;
+loader.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
 
 ````
 
