@@ -377,7 +377,7 @@ static UIImageLoader * _default;
 	
 	//add last modified if available
 	if(cached.lastModified) {
-		[mutableRequest setValue:cached.lastModified forKey:@"If-Modified-Since"];
+		[mutableRequest setValue:cached.lastModified forHTTPHeaderField:@"If-Modified-Since"];
 	}
 	
 	sendingRequest(didSendCacheCompletion);
