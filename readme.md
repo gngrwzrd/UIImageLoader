@@ -249,8 +249,8 @@ For image responses that return a 304, but don't include a Cache-Control header 
 You can set a default cache time for this scenario in order to stop these requests.
 
 ````
-myCache.defaultCacheControlMaxAge = 604800; //1 week;
-myCache.defaultCacheControlMaxAge = 0;      //(default) always send request to see if there's new content.
+myLoader.defaultCacheControlMaxAge = 604800; //1 week;
+myLoader.defaultCacheControlMaxAge = 0;      //(default) always send request to see if there's new content.
 ````
 
 ### NSURLSession
@@ -258,7 +258,7 @@ myCache.defaultCacheControlMaxAge = 0;      //(default) always send request to s
 You can customize the NSURLSession that's used to download images like this:
 
 ````
-myCache.session = myNSURLSession;
+myLoader.session = myNSURLSession;
 ````
 
 If you do customize the session. Make sure to use a session that runs on a background thread:
