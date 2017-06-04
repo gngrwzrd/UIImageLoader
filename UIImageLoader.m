@@ -96,7 +96,7 @@ static UIImageLoader * _default;
 	self.memoryCache = [[UIImageMemoryCache alloc] init];
 	self.cacheDirectory = url;
 	self.defaultCacheControlMaxAgeForErrors = 0;
-	self.maxTriesForErrors = 3;
+	self.maxTriesForErrors = 0;
 	return self;
 }
 

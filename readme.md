@@ -64,6 +64,8 @@ loader.useServerCachePolicy = TRUE;
 loader.logCacheMisses = TRUE;
 loader.defaultCacheControlMaxAge = 0;
 loader.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
+loader.defaultCacheControlMaxAgeForErrors = 0;
+loader.maxAttemptesForErrors = 0;
 [loader setMemoryCacheMaxBytes:25 * (1024 * 1024)]; //25 MB
 ````
 
