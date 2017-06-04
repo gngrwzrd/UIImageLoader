@@ -71,7 +71,7 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 //if a response is 4XX, or 5XX. The max tries before a cache control max-age is set.
 //The image will be requested again after the max-age for the image. Use this in
 //conjunction with badRequestCacheControlMaxAge;
-@property NSInteger maxTriesForErrors;      //default is 3
+@property NSInteger maxAtemptsForErrors;      //default is 3
 
 //the max cache time for error responses.
 @property NSInteger defaultCacheControlMaxAgeForErrors; //default is 0 (no cache)

@@ -96,7 +96,7 @@ static UIImageLoader * _default;
 	self.memoryCache = [[UIImageMemoryCache alloc] init];
 	self.cacheDirectory = url;
 	self.defaultCacheControlMaxAgeForErrors = 0;
-	self.maxTriesForErrors = 0;
+	self.maxAtemptsForErrors = 0;
 	return self;
 }
 
@@ -351,7 +351,7 @@ static UIImageLoader * _default;
 	if(cached.errorLast) {
 		NSDate * cacheInfoFileCreatedDate = [self createdDateForFileURL:cacheInfoFile];
 		NSTimeInterval errorDiff = [now timeIntervalSinceDate:cacheInfoFileCreatedDate];
-		if(!cached.nocache && cached.errorAttempts >= self.maxTriesForErrors && cached.errorMaxage > 0 && errorDiff < cached.errorMaxage) {
+		if(!cached.nocache && cached.errorAttempts >= self.maxAtemptsForErrors && cached.errorMaxage > 0 && errorDiff < cached.errorMaxage) {
 			requestCompleted(cached.errorLast,nil,UIImageLoadSourceNone);
 			return nil;
 		}
@@ -392,7 +392,7 @@ static UIImageLoader * _default;
 	if(cached.errorLast) {
 		cached.errorLast = nil;
 	}
-	if(cached.errorAttempts >= self.maxTriesForErrors) {
+	if(cached.errorAttempts >= self.maxAtemptsForErrors) {
 		cached.errorAttempts = 0;
 	}
 	
