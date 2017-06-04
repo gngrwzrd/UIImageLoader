@@ -424,8 +424,8 @@ static UIImageLoader * _default;
 		
 		//4XX, 5XX errors we can possibly cache.
 		if(httpResponse.statusCode > 399 && httpResponse.statusCode < 600) {
-			
-			NSDictionary * info = @{NSLocalizedDescriptionKey:@"Failed to load image"};
+			NSString * errorString = [NSString stringWithFormat:@"Request failed with error code %li", httpResponse.statusCode];
+			NSDictionary * info = @{NSLocalizedDescriptionKey:errorString};
 			NSError * error = [[NSError alloc] initWithDomain:UIImageLoaderErrorDomain code:httpResponse.statusCode userInfo:info];
 			if(self.defaultCacheControlMaxAgeForErrors > 0) {
 				cached.errorAttempts++;

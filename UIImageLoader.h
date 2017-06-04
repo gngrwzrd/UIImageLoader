@@ -115,16 +115,16 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 
 //load an image with URL.
 - (NSURLSessionDataTask * _Nullable) loadImageWithURL:(NSURL * _Nullable) url
-								   hasCache:(UIImageLoader_HasCacheBlock _Nullable) hasCache
-								sendingRequest:(UIImageLoader_SendingRequestBlock _Nullable) sendingRequest
-						   requestCompleted:(UIImageLoader_RequestCompletedBlock _Nullable) requestCompleted;
+	hasCache:(UIImageLoader_HasCacheBlock _Nullable) hasCache
+	sendingRequest:(UIImageLoader_SendingRequestBlock _Nullable) sendingRequest
+	requestCompleted:(UIImageLoader_RequestCompletedBlock _Nullable) requestCompleted;
 
 //load an image with custom request.
 //auth headers will be added to your request if needed.
 - (NSURLSessionDataTask * _Nullable) loadImageWithRequest:(NSURLRequest * _Nullable) request
-									   hasCache:(UIImageLoader_HasCacheBlock _Nullable) hasCache
-									sendingRequest:(UIImageLoader_SendingRequestBlock _Nullable) sendingRequest
-							   requestCompleted:(UIImageLoader_RequestCompletedBlock _Nullable) requestCompleted;
+	hasCache:(UIImageLoader_HasCacheBlock _Nullable) hasCache
+	sendingRequest:(UIImageLoader_SendingRequestBlock _Nullable) sendingRequest
+	requestCompleted:(UIImageLoader_RequestCompletedBlock _Nullable) requestCompleted;
 
 @end
 

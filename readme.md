@@ -261,6 +261,25 @@ myLoader.defaultCacheControlMaxAge = 604800; //1 week;
 myLoader.defaultCacheControlMaxAge = 0;      //(default) always send request to see if there's new content.
 ````
 
+### 4XX & 5XX Errors
+
+For image responses that return errors, you can configure what to do in those cases.
+
+You can allow any number of attempts to retrieve images that have received error responses:
+
+````
+myLoader.maxAttemptsForErrors = 3; (default) Allow three attempts to get the image.
+myLoader.maxAttemptsforErrors = 1; Only allow one error before the cache takes effect.
+````
+
+You can set a default max age for error caching:
+
+````
+myLoader.defaultCacheControlMaxAgeForErrors = 604800; //1 week;
+myLoader.defaultCacheControlMaxAgeForErrors = 0; //(default) always send request to try and get the image.
+
+````
+
 ### NSURLSession
 
 You can customize the NSURLSession that's used to download images like this:
