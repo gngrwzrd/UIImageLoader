@@ -12,6 +12,10 @@ It's compatible with iOS and Mac. And very small at roughly 600+ lines of code i
 
 Everything is asynchronous and uses modern objective-c with libdispatch and NSURLSession.
 
+## Swift Compatibility
+
+Yes. Just import UIImageLoader.h into your Project-bridge-header.h file.
+
 ## Server Cache Control
 
 It supports responses with Cache-Control max age, ETag, and Last-Modified headers.
@@ -21,6 +25,10 @@ It sends requests with If-None-Match, and If-Modified-Since.
 If the server doesn't respond with a Cache-Control header, you can optionally set a default cache control max age in order to cache the image for a specified time.
 
 If a response is 304 it uses the cached image available on disk.
+
+## 4XX & 5XX Responses
+
+For 4XX and 5XX responses you can specify a number of allowed tries to get the image. And a cache control max age - to prevent sending the same requests in the event of an error.
 
 ## Installation
 

@@ -38,6 +38,10 @@
 @property NSString * etag;
 @property NSString * lastModified;
 @property BOOL nocache;
+//for errors 4XX,5XX
+@property NSInteger errorAttempts;
+@property NSTimeInterval errorMaxage;
+@property NSError * errorLast;
 @end
 
 /* UIImageLoader */
@@ -47,10 +51,8 @@ typedef void(^UIImageLoaderURLCompletion)(NSError * error, NSURL * diskURL, UIIm
 typedef void(^UIImageLoaderDiskURLCompletion)(NSURL * diskURL);
 
 //errors
-NSString * const UIImageLoaderErrorDomain = @"com.gngrwzrd.UIImageDisckCache";
-const NSInteger UIImageLoaderErrorResponseCode = 1;
-const NSInteger UIImageLoaderErrorContentType = 2;
-const NSInteger UIImageLoaderErrorNilURL = 3;
+NSString * const UIImageLoaderErrorDomain = @"com.gngrwzrd.UIImageLoader";
+const NSInteger UIImageLoaderErrorNilURL = 1;
 
 //default loader
 static UIImageLoader * _default;
@@ -93,7 +95,8 @@ static UIImageLoader * _default;
 	self.defaultCacheControlMaxAge = 0;
 	self.memoryCache = [[UIImageMemoryCache alloc] init];
 	self.cacheDirectory = url;
-	self.acceptedContentTypes = @[@"image/png",@"image/jpg",@"image/jpeg",@"image/bmp",@"image/gif",@"image/tiff"];
+	self.defaultCacheControlMaxAgeForErrors = 0;
+	self.maxTriesForErrors = 3;
 	return self;
 }
 
@@ -245,10 +248,6 @@ static UIImageLoader * _default;
 	return [NSURL fileURLWithPath:path];
 }
 
-- (BOOL) acceptedContentType:(NSString *) contentType {
-	return [self.acceptedContentTypes containsObject:contentType];
-}
-
 - (NSDate *) createdDateForFileURL:(NSURL *) url {
 	NSDictionary * attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:url.path error:nil];
 	if(!attributes) {
@@ -315,9 +314,8 @@ static UIImageLoader * _default;
 	sendingRequest:(UIImageLoader_SendingRequestBlock) sendingRequest
 	requestCompleted:(UIImageLoaderURLCompletion) requestCompleted {
 	
-	if(!request.URL) {
-		NSLog(@"[UIImageLoader] ERROR: request.URL was NULL");
-		requestCompleted([NSError errorWithDomain:UIImageLoaderErrorDomain code:UIImageLoaderErrorNilURL userInfo:@{NSLocalizedDescriptionKey:@"request.URL is nil"}],nil,UIImageLoadSourceNone);
+	if(!request.URL || request.URL.absoluteString.length < 1) {
+		requestCompleted([NSError errorWithDomain:UIImageLoaderErrorDomain code:UIImageLoaderErrorNilURL userInfo:@{NSLocalizedDescriptionKey:@"The request URL is nil or empty."}],nil,UIImageLoadSourceNone);
 	}
 	
 	//make mutable request
@@ -347,6 +345,16 @@ static UIImageLoader * _default;
 	//check cache expiration
 	if(!cached.nocache && cached.maxage > 0 && diff < cached.maxage) {
 		cacheValid = TRUE;
+	}
+	
+	//check error attempts and max error age
+	if(cached.errorLast) {
+		NSDate * cacheInfoFileCreatedDate = [self createdDateForFileURL:cacheInfoFile];
+		NSTimeInterval errorDiff = [now timeIntervalSinceDate:cacheInfoFileCreatedDate];
+		if(!cached.nocache && cached.errorAttempts >= self.maxTriesForErrors && cached.errorMaxage > 0 && errorDiff < cached.errorMaxage) {
+			requestCompleted(cached.errorLast,nil,UIImageLoadSourceNone);
+			return nil;
+		}
 	}
 	
 	BOOL didSendCacheCompletion = FALSE;
@@ -380,13 +388,17 @@ static UIImageLoader * _default;
 		[mutableRequest setValue:cached.lastModified forHTTPHeaderField:@"If-Modified-Since"];
 	}
 	
+	//reset error cache info file if necessary.
+	if(cached.errorLast) {
+		cached.errorLast = nil;
+	}
+	if(cached.errorAttempts >= self.maxTriesForErrors) {
+		cached.errorAttempts = 0;
+	}
+	
 	sendingRequest(didSendCacheCompletion);
 	
 	NSURLSessionDataTask * task = [[self session] dataTaskWithRequest:mutableRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-		if(error) {
-			requestCompleted(error,nil,UIImageLoadSourceNone);
-			return;
-		}
 		
 		NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *)response;
 		NSDictionary * headers = [httpResponse allHeaderFields];
@@ -410,17 +422,25 @@ static UIImageLoader * _default;
 			return;
 		}
 		
-		//status not OK error
-		if(httpResponse.statusCode != 200) {
-			NSString * message = [NSString stringWithFormat:@"Invalid image cache response %li",(long)httpResponse.statusCode];
-			requestCompleted([NSError errorWithDomain:UIImageLoaderErrorDomain code:UIImageLoaderErrorResponseCode userInfo:@{NSLocalizedDescriptionKey:message}],nil,UIImageLoadSourceNone);
+		//4XX, 5XX errors we can possibly cache.
+		if(httpResponse.statusCode > 399 && httpResponse.statusCode < 600) {
+			
+			NSDictionary * info = @{NSLocalizedDescriptionKey:@"Failed to load image"};
+			NSError * error = [[NSError alloc] initWithDomain:UIImageLoaderErrorDomain code:httpResponse.statusCode userInfo:info];
+			if(self.defaultCacheControlMaxAgeForErrors > 0) {
+				cached.errorAttempts++;
+			}
+			cached.errorLast = error;
+			cached.errorMaxage = self.defaultCacheControlMaxAgeForErrors;
+			[self writeCacheControlData:cached toFile:cacheInfoFile];
+			requestCompleted(error,nil,UIImageLoadSourceNone);
+			
 			return;
 		}
 		
-		//check that content type is an image.
-		NSString * contentType = headers[@"Content-Type"];
-		if(![self acceptedContentType:contentType]) {
-			requestCompleted([NSError errorWithDomain:UIImageLoaderErrorDomain code:UIImageLoaderErrorContentType userInfo:@{NSLocalizedDescriptionKey:@"Response was not an image"}],nil,UIImageLoadSourceNone);
+		//error
+		if(httpResponse.statusCode < 200 && httpResponse.statusCode > 299 && error) {
+			requestCompleted(error,nil,UIImageLoadSourceNone);
 			return;
 		}
 		
@@ -465,9 +485,8 @@ static UIImageLoader * _default;
 		return [self cacheImageWithRequestUsingCacheControl:request hasCache:hasCache sendingRequest:sendingRequest requestCompleted:requestComplete];
 	}
 	
-	if(!request.URL) {
-		NSLog(@"[UIImageLoader] ERROR: request.URL was NULL");
-		requestComplete([NSError errorWithDomain:UIImageLoaderErrorDomain code:UIImageLoaderErrorNilURL userInfo:@{NSLocalizedDescriptionKey:@"request.URL is nil"}],nil,UIImageLoadSourceNone);
+	if(!request.URL || request.URL.absoluteString.length < 1) {
+		requestComplete([NSError errorWithDomain:UIImageLoaderErrorDomain code:UIImageLoaderErrorNilURL userInfo:@{NSLocalizedDescriptionKey:@"The request URL is nil or empty."}],nil,UIImageLoadSourceNone);
 	}
 	
 	//make mutable request
@@ -494,14 +513,7 @@ static UIImageLoader * _default;
 		
 		NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *)response;
 		if(httpResponse.statusCode != 200) {
-			NSString * message = [NSString stringWithFormat:@"Invalid image cache response %li",(long)httpResponse.statusCode];
-			requestComplete([NSError errorWithDomain:UIImageLoaderErrorDomain code:UIImageLoaderErrorResponseCode userInfo:@{NSLocalizedDescriptionKey:message}],nil,UIImageLoadSourceNone);
-			return;
-		}
-		
-		NSString * contentType = [[httpResponse allHeaderFields] objectForKey:@"Content-Type"];
-		if(![self acceptedContentType:contentType]) {
-			requestComplete([NSError errorWithDomain:UIImageLoaderErrorDomain code:UIImageLoaderErrorContentType userInfo:@{NSLocalizedDescriptionKey:@"Response was not an image"}],nil,UIImageLoadSourceNone);
+			requestComplete(error,nil,UIImageLoadSourceNone);
 			return;
 		}
 		
@@ -589,6 +601,9 @@ static UIImageLoader * _default;
 	self.maxage = 0;
 	self.etag = nil;
 	self.lastModified = nil;
+	self.errorMaxage = 0;
+	self.errorLast = nil;
+	self.errorAttempts = 0;
 	return self;
 }
 
@@ -599,6 +614,9 @@ static UIImageLoader * _default;
 	self.etag = [un decodeObjectForKey:@"etag"];
 	self.nocache = [un decodeBoolForKey:@"nocache"];
 	self.lastModified = [un decodeObjectForKey:@"lastModified"];
+	self.errorLast = [un decodeObjectForKey:@"errorLast"];
+	self.errorMaxage = [un decodeDoubleForKey:@"errorMaxage"];
+	self.errorAttempts = [un decodeIntegerForKey:@"errorAttempts"];
 	return self;
 }
 
@@ -608,6 +626,9 @@ static UIImageLoader * _default;
 	[ar encodeDouble:self.maxage forKey:@"maxage"];
 	[ar encodeBool:self.nocache forKey:@"nocache"];
 	[ar encodeObject:self.lastModified forKey:@"lastModified"];
+	[ar encodeInteger:self.errorAttempts forKey:@"errorAttempts"];
+	[ar encodeObject:self.errorLast forKey:@"errorLast"];
+	[ar encodeDouble:self.errorMaxage forKey:@"errorMaxage"];
 }
 
 @end
