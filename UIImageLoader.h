@@ -1,9 +1,9 @@
 
 #import <TargetConditionals.h>
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_TV
 #import <UIKit/UIKit.h>
-#elif TARGET_OS_MAC
+#elif TARGET_OS_OSX
 #import <Cocoa/Cocoa.h>
 #endif
 
@@ -12,10 +12,10 @@
 //MARK:- UIImageLoader
 
 // UIImageLoaderImage - typedef for ios/mac compatibility
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_TV
 typedef UIImage UIImageLoaderImage;
 typedef UIActivityIndicatorView UIImageLoaderSpinner;
-#elif TARGET_OS_MAC
+#elif TARGET_OS_OSX
 typedef NSImage UIImageLoaderImage;
 typedef NSProgressIndicator UIImageLoaderSpinner;
 #endif
@@ -151,16 +151,16 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 
 //MARK:- NSImageView & UIImageView additions.
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_TV
 @interface UIImageView (UIImageLoader)
-#elif TARGET_OS_MAC
+#elif TARGET_OS_OSX
 @interface NSImageView (UIImageLoader)
 #endif
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || TARGET_OS_TV
 //The views contentMode after the image has loaded.
 - (void) uiImageLoader_setCompletedContentMode:(UIViewContentMode) completedContentMode;
-#elif TARGET_OS_MAC
+#elif TARGET_OS_OSX
 //The views image scaling value after the image has loaded.
 - (void) uiImageLoader_setCompletedImageScaling:(NSImageScaling) imageScaling;
 #endif

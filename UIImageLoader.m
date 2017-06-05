@@ -634,9 +634,9 @@ static UIImageLoader * _default;
 
 @end
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_TV
 @implementation UIImageView (UIImageLoader)
-#elif TARGET_OS_MAC
+#elif TARGET_OS_OSX
 @implementation NSImageView (UIImageLoader)
 #endif
 
@@ -646,11 +646,11 @@ static const char * _cancelsRunningTask = "uiImageLoader_cancelsRunningTask";
 static const char * _completedContent = "uiImageLoader_completedContent";
 static const char * _spinner = "uiImageLoader_spinner";
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || TARGET_OS_TV
 - (void) uiImageLoader_setCompletedContentMode:(UIViewContentMode) completedContentMode; {
 	objc_setAssociatedObject(self, _completedContent, [NSNumber numberWithInt:completedContentMode], OBJC_ASSOCIATION_ASSIGN);
 }
-#elif TARGET_OS_MAC
+#elif TARGET_OS_OSX
 - (void) uiImageLoader_setCompletedImageScaling:(NSImageScaling) imageScaling; {
 	[self setImageScaling:imageScaling];
 }
@@ -698,10 +698,10 @@ static const char * _spinner = "uiImageLoader_spinner";
 		}
 		
 		if(spinner) {
-			#if TARGET_OS_IPHONE
+			#if TARGET_OS_IOS || TARGET_OS_TV
 			[spinner setHidden:YES];
 			[spinner stopAnimating];
-			#elif TARGET_OS_MAC
+			#elif TARGET_OS_OSX
 			[spinner setHidden:YES];
 			[spinner stopAnimation:nil];
 			#endif
@@ -710,10 +710,10 @@ static const char * _spinner = "uiImageLoader_spinner";
 	} sendingRequest:^(BOOL didHaveCachedImage) {
 		
 		if(spinner && !didHaveCachedImage) {
-			#if TARGET_OS_IPHONE
+			#if TARGET_OS_IOS || TARGET_OS_TV
 			[spinner setHidden:NO];
 			[spinner startAnimating];
-			#elif TARGET_OS_MAC
+			#elif TARGET_OS_OSX
 			[spinner setHidden:NO];
 			[spinner startAnimation:nil];
 			#endif
@@ -722,10 +722,10 @@ static const char * _spinner = "uiImageLoader_spinner";
 	} requestCompleted:^(NSError * _Nullable error, UIImageLoaderImage * _Nullable image, UIImageLoadSource loadedFromSource) {
 		
 		if(spinner) {
-			#if TARGET_OS_IPHONE
+			#if TARGET_OS_IOS || TARGET_OS_TV
 			[spinner setHidden:YES];
 			[spinner stopAnimating];
-			#elif TARGET_OS_MAC
+			#elif TARGET_OS_OSX
 			[spinner setHidden:YES];
 			[spinner stopAnimation:nil];
 			#endif
@@ -738,9 +738,9 @@ static const char * _spinner = "uiImageLoader_spinner";
 			NSURL * lastRequestedURL = objc_getAssociatedObject(self, _loadingURL);
 			if(lastRequestedURL == nil || [lastRequestedURL isEqual:request.URL]) {
 				NSNumber * completedImageScaling = objc_getAssociatedObject(self, _completedContent);
-				#if TARGET_OS_IOS
+				#if TARGET_OS_IOS || TARGET_OS_TV
 				self.contentMode = completedImageScaling.integerValue;
-				#elif TARGET_OS_MAC
+				#elif TARGET_OS_OSX
 				[self setImageScaling:completedImageScaling.integerValue];
 				#endif
 				self.image = image;
