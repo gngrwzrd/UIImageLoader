@@ -27,38 +27,13 @@
 }
 
 - (void) setRepresentedObject:(id)representedObject {
+	self.imageView.image = [NSImage imageNamed:@"dribbble_ball"];
 	NSDictionary * shot = (NSDictionary *)representedObject;
 	NSDictionary * images = shot[@"images"];
-	
 	NSURL * url = [NSURL URLWithString:images[@"normal"]];
-	self.activeURL = url;
-	
-	self.task = [[UIImageLoader defaultLoader] loadImageWithURL:self.activeURL hasCache:^(UIImageLoaderImage *image, UIImageLoadSource loadedFromSource) {
-		
-		self.imageView.image = image;
-		self.spinner.hidden = TRUE;
-		[self.spinner stopAnimation:nil];
-		
-	} sendingRequest:^(BOOL didHaveCachedImage) {
-		
-		if(!didHaveCachedImage) {
-			[self.spinner startAnimation:nil];
-			self.spinner.hidden = FALSE;
-		}
-		
-	} requestCompleted:^(NSError *error, UIImageLoaderImage *image, UIImageLoadSource loadedFromSource) {
-		
-		[self.spinner stopAnimation:nil];
-		self.spinner.hidden = TRUE;
-		
-		if(!self.cancelsTask && ![self.activeURL.absoluteString isEqualToString:url.absoluteString]) {
-			return;
-		}
-		
-		if(loadedFromSource == UIImageLoadSourceNetworkToDisk) {
-			self.imageView.image = image;
-		}
-	}];
+	[self.imageView uiImageLoader_setCancelsRunningTask:false];
+	[self.imageView uiImageLoader_setSpinner:self.spinner];
+	[self.imageView uiImageLoader_setImageWithURL:url];
 }
 
 @end
