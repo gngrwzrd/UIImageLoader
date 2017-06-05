@@ -1,5 +1,6 @@
 
 #import "UIImageLoader.h"
+#import <objc/runtime.h>
 
 /* UIImageMemoryCache */
 @interface UIImageMemoryCache ()
@@ -629,6 +630,125 @@ static UIImageLoader * _default;
 	[ar encodeInteger:self.errorAttempts forKey:@"errorAttempts"];
 	[ar encodeObject:self.errorLast forKey:@"errorLast"];
 	[ar encodeDouble:self.errorMaxage forKey:@"errorMaxage"];
+}
+
+@end
+
+#if TARGET_OS_IPHONE
+@implementation UIImageView (UIImageLoader)
+#elif TARGET_OS_MAC
+@implementation NSImageView (UIImageLoader)
+#endif
+
+static const char * _loadingURL = "uiImageLoader_loadingURL";
+static const char * _runningTask = "uiImageLoader_runningTask";
+static const char * _cancelsRunningTask = "uiImageLoader_cancelsRunningTask";
+static const char * _completedContent = "uiImageLoader_completedContent";
+static const char * _spinner = "uiImageLoader_spinner";
+
+#if TARGET_OS_IOS
+- (void) uiImageLoader_setCompletedContentMode:(UIViewContentMode) completedContentMode; {
+	objc_setAssociatedObject(self, _completedContent, [NSNumber numberWithInt:completedContentMode], OBJC_ASSOCIATION_ASSIGN);
+}
+#elif TARGET_OS_MAC
+- (void) uiImageLoader_setCompletedImageScaling:(NSImageScaling) imageScaling; {
+	[self setImageScaling:imageScaling];
+}
+#endif
+
+- (void) uiImageLoader_setCancelsRunningTask:(BOOL) cancelsRunningTask;{
+	objc_setAssociatedObject(self, _cancelsRunningTask, [NSNumber numberWithBool:cancelsRunningTask], OBJC_ASSOCIATION_ASSIGN);
+}
+
+- (void) uiImageLoader_setSpinner:(UIImageLoaderSpinner *) spinner; {
+	objc_setAssociatedObject(self, _spinner, spinner, OBJC_ASSOCIATION_ASSIGN);
+}
+
+- (void) uiImageLoader_setImageWithURL:(NSURL *) url; {
+	NSURLRequest * request = [NSURLRequest requestWithURL:url];
+	[self uiImageLoader_setImageWithRequest:request];
+}
+
+- (void) uiImageLoader_setImageWithRequest:(NSURLRequest *) request; {
+	
+	if(!request.URL || [request.URL.absoluteString length] < 1) {
+		return;
+	}
+	
+	//get cancels task
+	BOOL cancelsTasks = [objc_getAssociatedObject(self, _cancelsRunningTask) boolValue];
+	
+	//check if there's an existing task to cancel.
+	NSURLSessionDataTask * task = (NSURLSessionDataTask *)objc_getAssociatedObject(self, _runningTask);
+	if(task && cancelsTasks) {
+		[task cancel];
+	}
+	
+	//get spinner
+	UIImageLoaderSpinner * spinner = objc_getAssociatedObject(self, _spinner);
+	
+	//set the last requested URL to load.
+	objc_setAssociatedObject(self, _loadingURL, request.URL, OBJC_ASSOCIATION_COPY_NONATOMIC);
+	
+	//load image.
+	task = [[UIImageLoader defaultLoader] loadImageWithRequest:request hasCache:^(UIImageLoaderImage * _Nullable image, UIImageLoadSource loadedFromSource) {
+		
+		if(image) {
+			self.image = image;
+		}
+		
+		if(spinner) {
+			#if TARGET_OS_IPHONE
+			[spinner setHidden:YES];
+			[spinner stopAnimating];
+			#elif TARGET_OS_MAC
+			[spinner setHidden:YES];
+			[spinner stopAnimation:nil];
+			#endif
+		}
+		
+	} sendingRequest:^(BOOL didHaveCachedImage) {
+		
+		if(spinner && !didHaveCachedImage) {
+			#if TARGET_OS_IPHONE
+			[spinner setHidden:NO];
+			[spinner startAnimating];
+			#elif TARGET_OS_MAC
+			[spinner setHidden:NO];
+			[spinner startAnimation:nil];
+			#endif
+		}
+		
+	} requestCompleted:^(NSError * _Nullable error, UIImageLoaderImage * _Nullable image, UIImageLoadSource loadedFromSource) {
+		
+		if(spinner) {
+			#if TARGET_OS_IPHONE
+			[spinner setHidden:YES];
+			[spinner stopAnimating];
+			#elif TARGET_OS_MAC
+			[spinner setHidden:YES];
+			[spinner stopAnimation:nil];
+			#endif
+		}
+		
+		if(image) {
+			
+			//make sure the image completed matches the last requested image to display.
+			//this is most useful for table cells which are recycled.
+			NSURL * lastRequestedURL = objc_getAssociatedObject(self, _loadingURL);
+			if(lastRequestedURL == nil || [lastRequestedURL isEqual:request.URL]) {
+				NSNumber * completedImageScaling = objc_getAssociatedObject(self, _completedContent);
+				#if TARGET_OS_IOS
+				self.contentMode = completedImageScaling.integerValue;
+				#elif TARGET_OS_MAC
+				[self setImageScaling:completedImageScaling.integerValue];
+				#endif
+				self.image = image;
+			}
+		}
+	}];
+	
+	objc_setAssociatedObject(self, _runningTask, task, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end

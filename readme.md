@@ -305,6 +305,41 @@ Each load method returns the NSURLSessionDataTask used for network requests. You
 
 ## Other Useful Features
 
+### UIImage & NSImage Additions.
+
+These additions are available for UIImage and NSImage:
+
+````
+#if TARGET_OS_IPHONE
+@interface UIImageView (UIImageLoader)
+#elif TARGET_OS_MAC
+@interface NSImageView (UIImageLoader)
+#endif
+
+#if TARGET_OS_IOS
+//The views contentMode after the image has loaded.
+- (void) uiImageLoader_setCompletedContentMode:(UIViewContentMode) completedContentMode;
+#elif TARGET_OS_MAC
+//The views image scaling value after the image has loaded.
+- (void) uiImageLoader_setCompletedImageScaling:(NSImageScaling) imageScaling;
+#endif
+
+//Whether or not existing running download task should be canceled. You can safely
+//ignore this if you want to let images download to be cached.
+- (void) uiImageLoader_setCancelsRunningTask:(BOOL) cancelsRunningTask;
+
+//Set a spinner instance. This is retained so you should set it to nil at some point.
+- (void) uiImageLoader_setSpinner:(UIImageLoaderSpinner * _Nullable) spinner;
+
+//Set the image with a URL.
+- (void) uiImageLoader_setImageWithURL:(NSURL * _Nullable) url;
+
+//Set the image with a URLRequest.
+- (void) uiImageLoader_setImageWithRequest:(NSURLRequest * _Nullable) request;
+
+@end
+````
+
 ### SSL
 
 If you need to support self signed certificates you can use (false by default):

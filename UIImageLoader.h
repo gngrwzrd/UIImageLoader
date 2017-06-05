@@ -9,15 +9,15 @@
 
 //https://github.com/gngrwzrd/UIImageLoader
 
-/********************/
-/* UIImageLoader */
-/********************/
+//MARK:- UIImageLoader
 
 // UIImageLoaderImage - typedef for ios/mac compatibility
 #if TARGET_OS_IPHONE
 typedef UIImage UIImageLoaderImage;
+typedef UIActivityIndicatorView UIImageLoaderSpinner;
 #elif TARGET_OS_MAC
 typedef NSImage UIImageLoaderImage;
+typedef NSProgressIndicator UIImageLoaderSpinner;
 #endif
 
 //image source passed in completion callbacks.
@@ -40,6 +40,9 @@ typedef NS_ENUM(NSInteger,UIImageLoadSource) {
 @class UIImageMemoryCache;
 
 //completion block
+typedef void(^UIImageLoader_StartBlock)(UIImageLoaderImage * _Nullable image, UIImageLoadSource loadedFromSource, BOOL isSendingRequest);
+typedef void(^UIImageLoader_StopBlock)(NSError * _Nullable error, UIImageLoaderImage * _Nullable image, UIImageLoadSource loadedFromSource);
+
 typedef void(^UIImageLoader_HasCacheBlock)(UIImageLoaderImage * _Nullable image, UIImageLoadSource loadedFromSource);
 typedef void(^UIImageLoader_SendingRequestBlock)(BOOL didHaveCachedImage);
 typedef void(^UIImageLoader_RequestCompletedBlock)(NSError * _Nullable error, UIImageLoaderImage * _Nullable image, UIImageLoadSource loadedFromSource);
@@ -128,9 +131,7 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 
 @end
 
-/************************/
-/** UIImageMemoryCache **/
-/************************/
+//MARK:- UIImageMemoryCache
 
 @interface UIImageMemoryCache : NSObject
 
@@ -145,5 +146,36 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 
 //delete all cache data.
 - (void) purge;
+
+@end
+
+//MARK:- NSImageView & UIImageView additions.
+
+#if TARGET_OS_IPHONE
+@interface UIImageView (UIImageLoader)
+#elif TARGET_OS_MAC
+@interface NSImageView (UIImageLoader)
+#endif
+
+#if TARGET_OS_IOS
+//The views contentMode after the image has loaded.
+- (void) uiImageLoader_setCompletedContentMode:(UIViewContentMode) completedContentMode;
+#elif TARGET_OS_MAC
+//The views image scaling value after the image has loaded.
+- (void) uiImageLoader_setCompletedImageScaling:(NSImageScaling) imageScaling;
+#endif
+
+//Whether or not existing running download task should be canceled. You can safely
+//ignore this if you want to let images download to be cached.
+- (void) uiImageLoader_setCancelsRunningTask:(BOOL) cancelsRunningTask;
+
+//Set a spinner instance. This is retained so you should set it to nil at some point.
+- (void) uiImageLoader_setSpinner:(UIImageLoaderSpinner * _Nullable) spinner;
+
+//Set the image with a URL.
+- (void) uiImageLoader_setImageWithURL:(NSURL * _Nullable) url;
+
+//Set the image with a URLRequest.
+- (void) uiImageLoader_setImageWithRequest:(NSURLRequest * _Nullable) request;
 
 @end
