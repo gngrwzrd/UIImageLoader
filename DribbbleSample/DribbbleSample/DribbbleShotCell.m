@@ -24,7 +24,7 @@
 	NSURL * url = [NSURL URLWithString:images[@"normal"]];
 	[self.imageView uiImageLoader_setSpinner:self.indicator];
 	[self.imageView uiImageLoader_setCancelsRunningTask:false];
-	[self.imageView uiImageLoader_setCompletedContentMode:UIViewContentModeScaleAspectFit];
+	[self.imageView uiImageLoader_setFinalContentMode:UIViewContentModeScaleAspectFit];
 	[self.imageView uiImageLoader_setImageWithURL:url];
 }
 

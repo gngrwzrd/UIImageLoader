@@ -39,10 +39,7 @@ typedef NS_ENUM(NSInteger,UIImageLoadSource) {
 //forward
 @class UIImageMemoryCache;
 
-//completion block
-typedef void(^UIImageLoader_StartBlock)(UIImageLoaderImage * _Nullable image, UIImageLoadSource loadedFromSource, BOOL isSendingRequest);
-typedef void(^UIImageLoader_StopBlock)(NSError * _Nullable error, UIImageLoaderImage * _Nullable image, UIImageLoadSource loadedFromSource);
-
+//block typedefs
 typedef void(^UIImageLoader_HasCacheBlock)(UIImageLoaderImage * _Nullable image, UIImageLoadSource loadedFromSource);
 typedef void(^UIImageLoader_SendingRequestBlock)(BOOL didHaveCachedImage);
 typedef void(^UIImageLoader_RequestCompletedBlock)(NSError * _Nullable error, UIImageLoaderImage * _Nullable image, UIImageLoadSource loadedFromSource);
@@ -74,7 +71,7 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 //if a response is 4XX, or 5XX. The max tries before a cache control max-age is set.
 //The image will be requested again after the max-age for the image. Use this in
 //conjunction with badRequestCacheControlMaxAge;
-@property NSInteger maxAtemptsForErrors;      //default is 3
+@property NSInteger maxAttemptsForErrors;      //default is 3
 
 //the max cache time for error responses.
 @property NSInteger defaultCacheControlMaxAgeForErrors; //default is 0 (no cache)
@@ -159,10 +156,10 @@ extern const NSInteger UIImageLoaderErrorNilURL;
 
 #if TARGET_OS_IOS || TARGET_OS_TV
 //The views contentMode after the image has loaded.
-- (void) uiImageLoader_setCompletedContentMode:(UIViewContentMode) completedContentMode;
+- (void) uiImageLoader_setFinalContentMode:(UIViewContentMode) finalContentMode;
 #elif TARGET_OS_OSX
 //The views image scaling value after the image has loaded.
-- (void) uiImageLoader_setCompletedImageScaling:(NSImageScaling) imageScaling;
+- (void) uiImageLoader_setFinalImageScaling:(NSImageScaling) imageScaling;
 #endif
 
 //Whether or not existing running download task should be canceled. You can safely

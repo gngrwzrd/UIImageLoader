@@ -92,7 +92,7 @@
 				074D8D8B1C2A3205007B5516 /* ViewController.xib */,
 			);
 			path = DribbbleSample;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		074D8D6D1C2A313E007B5516 /* Supporting Files */ = {
 			isa = PBXGroup;

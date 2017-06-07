@@ -97,7 +97,7 @@ static UIImageLoader * _default;
 	self.memoryCache = [[UIImageMemoryCache alloc] init];
 	self.cacheDirectory = url;
 	self.defaultCacheControlMaxAgeForErrors = 0;
-	self.maxAtemptsForErrors = 0;
+	self.maxAttemptsForErrors = 0;
 	return self;
 }
 
@@ -352,7 +352,7 @@ static UIImageLoader * _default;
 	if(cached.errorLast) {
 		NSDate * cacheInfoFileCreatedDate = [self createdDateForFileURL:cacheInfoFile];
 		NSTimeInterval errorDiff = [now timeIntervalSinceDate:cacheInfoFileCreatedDate];
-		if(!cached.nocache && cached.errorAttempts >= self.maxAtemptsForErrors && cached.errorMaxage > 0 && errorDiff < cached.errorMaxage) {
+		if(!cached.nocache && cached.errorAttempts >= self.maxAttemptsForErrors && cached.errorMaxage > 0 && errorDiff < cached.errorMaxage) {
 			requestCompleted(cached.errorLast,nil,UIImageLoadSourceNone);
 			return nil;
 		}
@@ -393,7 +393,7 @@ static UIImageLoader * _default;
 	if(cached.errorLast) {
 		cached.errorLast = nil;
 	}
-	if(cached.errorAttempts >= self.maxAtemptsForErrors) {
+	if(cached.errorAttempts >= self.maxAttemptsForErrors) {
 		cached.errorAttempts = 0;
 	}
 	
@@ -643,16 +643,16 @@ static UIImageLoader * _default;
 static const char * _loadingURL = "uiImageLoader_loadingURL";
 static const char * _runningTask = "uiImageLoader_runningTask";
 static const char * _cancelsRunningTask = "uiImageLoader_cancelsRunningTask";
-static const char * _completedContent = "uiImageLoader_completedContent";
+static const char * _finalScaling = "uiImageLoader_finalScaling";
 static const char * _spinner = "uiImageLoader_spinner";
 
 #if TARGET_OS_IOS || TARGET_OS_TV
-- (void) uiImageLoader_setCompletedContentMode:(UIViewContentMode) completedContentMode; {
-	objc_setAssociatedObject(self, _completedContent, [NSNumber numberWithInt:completedContentMode], OBJC_ASSOCIATION_ASSIGN);
+- (void) uiImageLoader_setFinalContentMode:(UIViewContentMode) finalContentMode; {
+	objc_setAssociatedObject(self, _finalScaling, [NSNumber numberWithInt:finalContentMode], OBJC_ASSOCIATION_ASSIGN);
 }
 #elif TARGET_OS_OSX
-- (void) uiImageLoader_setCompletedImageScaling:(NSImageScaling) imageScaling; {
-	[self setImageScaling:imageScaling];
+- (void) uiImageLoader_setFinalImageScaling:(NSImageScaling) imageScaling; {
+	objc_setAssociatedObject(self, _finalScaling, [NSNumber numberWithInt:imageScaling], OBJC_ASSOCIATION_ASSIGN);
 }
 #endif
 
@@ -694,6 +694,16 @@ static const char * _spinner = "uiImageLoader_spinner";
 	task = [[UIImageLoader defaultLoader] loadImageWithRequest:request hasCache:^(UIImageLoaderImage * _Nullable image, UIImageLoadSource loadedFromSource) {
 		
 		if(image) {
+			
+			NSNumber * completedImageScaling = objc_getAssociatedObject(self, _finalScaling);
+			if(completedImageScaling) {
+				#if TARGET_OS_IOS || TARGET_OS_TV
+				self.contentMode = completedImageScaling.integerValue;
+				#elif TARGET_OS_OSX
+				[self setImageScaling:completedImageScaling.integerValue];
+				#endif
+			}
+			
 			self.image = image;
 		}
 		
@@ -737,12 +747,15 @@ static const char * _spinner = "uiImageLoader_spinner";
 			//this is most useful for table cells which are recycled.
 			NSURL * lastRequestedURL = objc_getAssociatedObject(self, _loadingURL);
 			if(lastRequestedURL == nil || [lastRequestedURL isEqual:request.URL]) {
-				NSNumber * completedImageScaling = objc_getAssociatedObject(self, _completedContent);
-				#if TARGET_OS_IOS || TARGET_OS_TV
-				self.contentMode = completedImageScaling.integerValue;
-				#elif TARGET_OS_OSX
-				[self setImageScaling:completedImageScaling.integerValue];
-				#endif
+				NSNumber * completedImageScaling = objc_getAssociatedObject(self, _finalScaling);
+				if(completedImageScaling) {
+					#if TARGET_OS_IOS || TARGET_OS_TV
+					self.contentMode = completedImageScaling.integerValue;
+					#elif TARGET_OS_OSX
+					[self setImageScaling:completedImageScaling.integerValue];
+					#endif
+				}
+				
 				self.image = image;
 			}
 		}
